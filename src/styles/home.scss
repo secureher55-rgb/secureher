@@ -1,0 +1,689 @@
+// Home.scss
+// Color variables
+$primary-red: #d32f2f;
+$dark-red: #b71c1c;
+$light-red: #ff6659;
+$white: #ffffff;
+$off-white: #f5f5f5;
+$dark-gray: #333333;
+$medium-gray: #666666;
+$light-gray: #e0e0e0;
+
+// Mixins
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin button-base {
+  border: none;
+  border-radius: 12px;
+  padding: 16px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  margin-bottom: 16px;
+  @include flex-center;
+  gap: 12px;
+  
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// Keyframes for emergency button pulse
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.7);
+  }
+  70% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 20px rgba(211, 47, 47, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(211, 47, 47, 0);
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+  80% {
+    transform: scale(1.2);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+}
+
+// Styles
+.home-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #8a0f0f 0%, #4a0000 100%);
+  font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  
+  // Navigation Bar
+  .navbar {
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      
+      .logo {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, $primary-red 0%, $dark-red 100%);
+        border-radius: 50%;
+        @include flex-center;
+        
+        i {
+          font-size: 20px;
+          color: $white;
+        }
+      }
+      
+      h1 {
+        font-size: 24px;
+        font-weight: 800;
+        color: $white;
+        margin: 0;
+        letter-spacing: 1px;
+      }
+    }
+    
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      
+      .nav-link {
+        background: rgba(255, 255, 255, 0.1);
+        color: $white;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        padding: 10px 18px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        @include flex-center;
+        gap: 8px;
+        
+        &:hover {
+          background: rgba(255, 255, 255, 0.2);
+        }
+        
+        &.login-btn {
+          background: rgba(255, 255, 255, 0.2);
+          border-color: rgba(255, 255, 255, 0.3);
+          
+          &:hover {
+            background: rgba(255, 255, 255, 0.3);
+          }
+        }
+      }
+      
+      .user-menu {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        
+        .user-info {
+          position: relative;
+          
+          .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, $primary-red 0%, $dark-red 100%);
+            border-radius: 50%;
+            @include flex-center;
+            color: $white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            
+            &:hover {
+              transform: scale(1.1);
+            }
+          }
+          
+          .dropdown-menu {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: $white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            z-index: 100;
+            min-width: 200px;
+            
+            .user-email {
+              color: $dark-gray;
+              font-size: 14px;
+              margin: 0 0 10px;
+              padding-bottom: 10px;
+              border-bottom: 1px solid $light-gray;
+              text-align: center;
+            }
+            
+            .dropdown-item {
+              width: 100%;
+              background: transparent;
+              border: none;
+              padding: 10px;
+              text-align: left;
+              cursor: pointer;
+              color: $dark-gray;
+              border-radius: 6px;
+              @include flex-center;
+              justify-content: flex-start;
+              gap: 10px;
+              transition: all 0.2s ease;
+              
+              &:hover {
+                background: rgba($primary-red, 0.1);
+                color: $primary-red;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  .main-content {
+    padding: 30px 20px;
+    @include flex-center;
+    
+    .card {
+      background: linear-gradient(135deg, $primary-red 0%, $dark-red 100%);
+      border-radius: 24px;
+      padding: 30px 25px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+      color: $white;
+      
+      .card-header {
+        text-align: center;
+        margin-bottom: 25px;
+        
+        .tagline {
+          color: rgba(255, 255, 255, 0.9);
+          font-size: 16px;
+          margin: 0;
+          font-weight: 500;
+        }
+      }
+      
+      .content {
+        .welcome-text {
+          text-align: center;
+          font-size: 18px;
+          margin-bottom: 12px;
+          font-weight: 500;
+          color: rgba(255, 255, 255, 0.95);
+        }
+        
+        .instruction {
+          text-align: center;
+          font-size: 15px;
+          margin-bottom: 30px;
+          color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .login-prompt {
+          text-align: center;
+          margin-bottom: 25px;
+          padding: 20px;
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 12px;
+          
+          .login-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            @include flex-center;
+            margin: 0 auto 15px;
+            
+            i {
+              font-size: 24px;
+              color: $white;
+            }
+          }
+          
+          .login-message {
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 15px;
+          }
+          
+          .login-btn-prompt {
+            @include button-base;
+            background: rgba(255, 255, 255, 0.2);
+            color: $white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            
+            &:hover {
+              background: rgba(255, 255, 255, 0.3);
+            }
+          }
+        }
+        
+        .quick-actions {
+          margin-top: 30px;
+          
+          h3 {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 15px;
+            font-size: 18px;
+          }
+          
+          .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            
+            .action-btn {
+              background: rgba(255, 255, 255, 0.1);
+              border: 1px solid rgba(255, 255, 255, 0.2);
+              border-radius: 12px;
+              padding: 15px;
+              color: $white;
+              cursor: pointer;
+              transition: all 0.3s ease;
+              @include flex-center;
+              flex-direction: column;
+              gap: 8px;
+              
+              i {
+                font-size: 20px;
+              }
+              
+              span {
+                font-size: 14px;
+                font-weight: 500;
+              }
+              
+              &:hover {
+                background: rgba(255, 255, 255, 0.2);
+                transform: translateY(-2px);
+              }
+            }
+          }
+        }
+        
+        // Contact Selector Styles
+        .contact-selector {
+          margin-bottom: 20px;
+          
+          h3 {
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 15px;
+            font-size: 18px;
+          }
+          
+          .no-contacts {
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+          }
+          
+          .contacts-list {
+            max-height: 200px;
+            overflow-y: auto;
+            
+            .contact-item {
+              display: flex;
+              align-items: center;
+              padding: 12px;
+              margin-bottom: 8px;
+              background: rgba(255, 255, 255, 0.1);
+              border-radius: 8px;
+              cursor: pointer;
+              transition: all 0.3s ease;
+              
+              &:hover {
+                background: rgba(255, 255, 255, 0.15);
+              }
+              
+              &.selected {
+                background: rgba(255, 255, 255, 0.2);
+                border: 1px solid rgba(255, 255, 255, 0.3);
+              }
+              
+              .contact-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, $primary-red 0%, $dark-red 100%);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color: $white;
+                font-weight: bold;
+                margin-right: 12px;
+              }
+              
+              .contact-info {
+                flex: 1;
+                
+                .contact-name {
+                  font-weight: 600;
+                  color: $white;
+                }
+                
+                .contact-phone {
+                  font-size: 14px;
+                  color: rgba(255, 255, 255, 0.8);
+                }
+              }
+              
+              .selection-indicator {
+                color: $white;
+                font-size: 18px;
+              }
+            }
+          }
+        }
+        
+        // Emergency Button Styles
+        .emergency-button-container {
+          margin: 20px 0;
+          
+          .emergency-btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            background: $white;
+            border: none;
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+            animation: pulse 2s infinite;
+            
+            .btn-inner {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              
+              .secureher-logo {
+                width: 80px;
+                height: 80px;
+                background: linear-gradient(135deg, $primary-red 0%, $dark-red 100%);
+                border-radius: 50%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin-bottom: 15px;
+                
+                i {
+                  font-size: 40px;
+                  color: $white;
+                }
+              }
+              
+              .call-text {
+                font-size: 20px;
+                font-weight: 700;
+                color: $primary-red;
+              }
+            }
+            
+            &:hover:not(:disabled) {
+              transform: translateY(-2px);
+              box-shadow: 0 12px 25px rgba(0, 0, 0, 0.35);
+            }
+            
+            &:active:not(:disabled) {
+              transform: translateY(1px);
+            }
+            
+            &.calling {
+              animation: none;
+              background: darken($white, 5%);
+              
+              .secureher-logo i {
+                animation: fa-spin 1s infinite linear;
+              }
+            }
+            
+            &:disabled {
+              opacity: 0.6;
+              cursor: not-allowed;
+              animation: none;
+              
+              &:hover {
+                transform: none;
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+              }
+            }
+          }
+        }
+        
+        // Emergency Active State
+        .emergency-active {
+          text-align: center;
+          
+          .emergency-status {
+            margin-bottom: 20px;
+            
+            .recording-indicator {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              color: $white;
+              font-weight: 600;
+              margin-bottom: 15px;
+              position: relative;
+              
+              .pulse-ring {
+                position: absolute;
+                width: 40px;
+                height: 40px;
+                border: 2px solid $primary-red;
+                border-radius: 50%;
+                animation: pulse-ring 1.5s infinite;
+              }
+              
+              i {
+                margin-right: 8px;
+                color: $primary-red;
+                font-size: 24px;
+                z-index: 1;
+              }
+            }
+            
+            .progress-bar {
+              width: 100%;
+              height: 8px;
+              background: rgba(255, 255, 255, 0.2);
+              border-radius: 4px;
+              overflow: hidden;
+              margin-bottom: 15px;
+              
+              .progress-fill {
+                height: 100%;
+                background: $primary-red;
+                transition: width 1s linear;
+              }
+            }
+            
+            .alert-info {
+              color: rgba(255, 255, 255, 0.9);
+              margin: 5px 0;
+            }
+            
+            .success-message, .error-message {
+              .success-icon, .error-icon {
+                font-size: 48px;
+                margin-bottom: 15px;
+              }
+              
+              h3 {
+                margin: 10px 0;
+                color: $white;
+              }
+              
+              p {
+                color: rgba(255, 255, 255, 0.9);
+                margin: 5px 0;
+              }
+            }
+            
+            .success-message {
+              .success-icon {
+                color: #4caf50;
+              }
+            }
+            
+            .error-message {
+              .error-icon {
+                color: #f44336;
+              }
+            }
+          }
+          
+          .cancel-btn {
+            @include button-base;
+            background: rgba(255, 255, 255, 0.15);
+            color: $white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            
+            &:hover {
+              background: rgba(255, 255, 255, 0.25);
+            }
+          }
+        }
+      }
+      
+      .footer {
+        text-align: center;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 12px;
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .home-container {
+    .navbar {
+      padding: 15px 20px;
+      flex-direction: column;
+      gap: 15px;
+      
+      .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+    }
+    
+    .main-content {
+      padding: 20px 15px;
+      
+      .card {
+        padding: 25px 20px;
+        
+        .content {
+          .quick-actions {
+            .action-buttons {
+              grid-template-columns: 1fr;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .home-container {
+    .navbar {
+      .nav-brand {
+        h1 {
+          font-size: 20px;
+        }
+      }
+      
+      .nav-links {
+        .nav-link {
+          padding: 8px 12px;
+          font-size: 12px;
+        }
+      }
+    }
+    
+    .main-content {
+      .card {
+        .content {
+          .emergency-button-container {
+            .emergency-btn {
+              .btn-inner {
+                .secureher-logo {
+                  width: 70px;
+                  height: 70px;
+                  
+                  i {
+                    font-size: 35px;
+                  }
+                }
+                
+                .call-text {
+                  font-size: 18px;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Additional animations
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+// Include Font Awesome for icons
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');

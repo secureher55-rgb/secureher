@@ -1,0 +1,75 @@
+// ContactSelector.scss
+.contact-selector {
+    margin-bottom: 20px;
+    
+    h3 {
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 15px;
+      font-size: 18px;
+    }
+    
+    .no-contacts {
+      color: rgba(255, 255, 255, 0.7);
+      text-align: center;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+    }
+    
+    .contacts-list {
+      max-height: 200px;
+      overflow-y: auto;
+      
+      .contact-item {
+        display: flex;
+        align-items: center;
+        padding: 12px;
+        margin-bottom: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        
+        &:hover {
+          background: rgba(255, 255, 255, 0.15);
+        }
+        
+        &.selected {
+          background: rgba(255, 255, 255, 0.2);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .contact-avatar {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          color: #ffffff;
+          font-weight: bold;
+          margin-right: 12px;
+        }
+        
+        .contact-info {
+          flex: 1;
+          
+          .contact-name {
+            font-weight: 600;
+            color: #ffffff;
+          }
+          
+          .contact-phone {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+          }
+        }
+        
+        .selection-indicator {
+          color: #ffffff;
+          font-size: 18px;
+        }
+      }
+    }
+  }

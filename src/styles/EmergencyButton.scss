@@ -1,0 +1,110 @@
+// EmergencyButton.scss
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+
+// Color variables
+$emergency-red: #d32f2f;
+$dark-red: #b71c1c;
+$white: #ffffff;
+
+// Keyframes for emergency button pulse
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.7);
+  }
+  70% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 20px rgba(211, 47, 47, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(211, 47, 47, 0);
+  }
+}
+
+.emergency-button-container {
+  margin: 20px 0;
+  
+  .emergency-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    background: $white;
+    border: none;
+    border-radius: 16px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    animation: pulse 2s infinite;
+    
+    .btn-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      
+      .secureher-logo {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, $emergency-red 0%, $dark-red 100%);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 15px;
+        
+        i {
+          font-size: 40px;
+          color: $white;
+        }
+      }
+      
+      .call-text {
+        font-size: 20px;
+        font-weight: 700;
+        color: $emergency-red;
+      }
+    }
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.35);
+    }
+    
+    &:active {
+      transform: translateY(1px);
+    }
+    
+    &.calling {
+      animation: none;
+      background: darken($white, 5%);
+      
+      .secureher-logo i {
+        animation: fa-spin 1s infinite linear;
+      }
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 480px) {
+  .emergency-button-container {
+    .emergency-btn {
+      .btn-inner {
+        .secureher-logo {
+          width: 70px;
+          height: 70px;
+          
+          i {
+            font-size: 35px;
+          }
+        }
+        
+        .call-text {
+          font-size: 18px;
+        }
+      }
+    }
+  }
+}
