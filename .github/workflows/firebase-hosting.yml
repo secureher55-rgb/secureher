@@ -17,14 +17,15 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
+          cache: 'npm'   # speeds up installs by caching node_modules
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci     # faster & more reliable than npm install in CI
 
       - name: Build project
         run: npm run build
 
-      - name: Deploy to Firebase
+      - name: Deploy to Firebase Hosting
         uses: w9jds/firebase-action@v2.2.0
         with:
           args: deploy --only hosting

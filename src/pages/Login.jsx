@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword,
@@ -27,7 +27,6 @@ const AuthPage = () => {
       ...formData,
       [e.target.name]: e.target.value
     });
-    // Clear error when user starts typing
     if (error) setError("");
   };
 
@@ -57,60 +56,43 @@ const AuthPage = () => {
         return false;
       }
     }
-    
     if (!formData.email) {
       setError("Please enter your email address");
       return false;
     }
-    
     if (!formData.password) {
       setError("Please enter your password");
       return false;
     }
-    
     return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     if (!validateForm()) return;
-    
+
     setIsLoading(true);
     setError("");
-    
+
     try {
       if (isLoginMode) {
-        // Login logic
         const userCredential = await signInWithEmailAndPassword(
           auth, 
           formData.email, 
           formData.password
         );
-        
-        // Get additional user data from Firestore
         const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
-        
-        if (userDoc.exists()) {
-          console.log("User data:", userDoc.data());
-        }
-        
-        // Navigate to home page on successful login
+        if (userDoc.exists()) console.log("User data:", userDoc.data());
         navigate("/");
       } else {
-        // Signup logic
         const userCredential = await createUserWithEmailAndPassword(
           auth,
           formData.email,
           formData.password
         );
-        
-        // Update user profile with name
         await updateProfile(userCredential.user, {
           displayName: formData.name
         });
-        
-        // Create user document in Firestore
         await setDoc(doc(db, "users", userCredential.user.uid), {
           uid: userCredential.user.uid,
           name: formData.name,
@@ -119,8 +101,6 @@ const AuthPage = () => {
           emergencyContacts: [],
           emergencyAlerts: []
         });
-        
-        // Navigate to home page on successful signup
         navigate("/");
       }
     } catch (error) {
@@ -136,7 +116,6 @@ const AuthPage = () => {
       setError("Please enter your email address first");
       return;
     }
-    
     try {
       await sendPasswordResetEmail(auth, formData.email);
       alert("Password reset email sent! Check your inbox.");
@@ -168,97 +147,91 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="login-container">
+    <div className="auth-container">
       <div className="login-card">
-        <div className="login-header">
-          <div className="logo-container">
-            <div className="logo">
-              <i className="fas fa-shield-alt"></i>
-            </div>
+        <div className="login-header text-center mb-6">
+          <div className="logo text-4xl mb-2">
+            <i className="fas fa-shield-alt"></i>
           </div>
-          <h1>{isLoginMode ? "SecureHer Login" : "Create Account"}</h1>
-          <p className="tagline">
-            {isLoginMode ? "Access your safety account" : "Join SecureHer for your safety"}
+          <h1 className="title">
+            {isLoginMode ? "SecureHer Login" : "Create Account"}
+          </h1>
+          <p className="subtitle">
+            {isLoginMode
+              ? "Access your safety account"
+              : "Join SecureHer for your safety"}
           </p>
         </div>
-        
+
         {error && (
           <div className="error-message">
             <i className="fas fa-exclamation-circle"></i>
             {error}
           </div>
         )}
-        
-        <form className="login-form" onSubmit={handleSubmit}>
+
+        <form className="form" onSubmit={handleSubmit}>
           {!isLoginMode && (
-            <div className="form-group">
-              <label htmlFor="name">Full Name</label>
+            <div>
+              <label>Full Name</label>
               <input
                 type="text"
-                id="name"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="Enter your full name"
-                required={!isLoginMode}
                 disabled={isLoading}
               />
             </div>
           )}
-          
-          <div className="form-group">
-            <label htmlFor="email">Email Address</label>
+
+          <div>
+            <label>Email</label>
             <input
               type="email"
-              id="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
               placeholder="Enter your email"
-              required
               disabled={isLoading}
             />
           </div>
-          
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
+
+          <div>
+            <label>Password</label>
             <input
               type="password"
-              id="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
               placeholder="Enter your password"
-              required
               disabled={isLoading}
             />
           </div>
-          
+
           {!isLoginMode && (
-            <div className="form-group">
-              <label htmlFor="confirmPassword">Confirm Password</label>
+            <div>
+              <label>Confirm Password</label>
               <input
                 type="password"
-                id="confirmPassword"
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 placeholder="Confirm your password"
-                required={!isLoginMode}
                 disabled={isLoading}
               />
             </div>
           )}
-          
+
           {isLoginMode && (
-            <div className="form-options">
-              <label className="remember-me">
+            <div className="options">
+              <label className="remember">
                 <input type="checkbox" disabled={isLoading} />
                 <span>Remember me</span>
               </label>
-              <button 
-                type="button" 
-                className="forgot-link"
+              <button
+                type="button"
+                className="forgot"
                 onClick={handleForgotPassword}
                 disabled={isLoading}
               >
@@ -266,38 +239,24 @@ const AuthPage = () => {
               </button>
             </div>
           )}
-          
-          <button 
-            type="submit" 
-            className={`login-submit-btn ${isLoading ? 'loading' : ''}`}
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <>
-                <i className="fas fa-circle-notch fa-spin"></i>
-                {isLoginMode ? "Logging in..." : "Creating account..."}
-              </>
-            ) : (
-              <>
-                <i className={isLoginMode ? "fas fa-sign-in-alt" : "fas fa-user-plus"}></i>
-                {isLoginMode ? "Login to Account" : "Create Account"}
-              </>
-            )}
+
+          <button type="submit" className="submit-btn" disabled={isLoading}>
+            {isLoading
+              ? isLoginMode
+                ? "Logging in..."
+                : "Creating account..."
+              : isLoginMode
+              ? "Login"
+              : "Sign Up"}
           </button>
         </form>
-        
-        <div className="auth-switch">
-          <p>
-            {isLoginMode ? "Don't have an account? " : "Already have an account? "}
-            <button type="button" className="switch-mode-btn" onClick={toggleMode}>
-              {isLoginMode ? "Sign up" : "Login"}
-            </button>
-          </p>
+
+        <div className="switch-mode">
+          {isLoginMode ? "Don't have an account? " : "Already have an account? "}
+          <button type="button" onClick={toggleMode}>
+            {isLoginMode ? "Sign up" : "Login"}
+          </button>
         </div>
-        
-        <footer className="login-footer">
-          <p>Powered by SecureHer & C-DAC Thiruvananthapuram</p>
-        </footer>
       </div>
     </div>
   );

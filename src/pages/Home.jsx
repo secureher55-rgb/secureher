@@ -1,16 +1,15 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   getFirestore, collection, getDocs, addDoc, 
-  doc, updateDoc, arrayUnion, Timestamp 
+  doc, getDoc, updateDoc, arrayUnion, Timestamp 
 } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
-import EmergencyButton from "../components/EmergencyButton";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import ContactSelector from "../components/ContactSelector";
 import "../styles/home.scss";
-
-// Initialize Firebase
+import "@fortawesome/fontawesome-free/css/all.min.css";
 import { app } from "../firebase/config";
 
 const db = getFirestore(app);
@@ -20,26 +19,39 @@ const auth = getAuth(app);
 export default function Home() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const [userName, setUserName] = useState("");
   const [isEmergencyMode, setIsEmergencyMode] = useState(false);
   const [contacts, setContacts] = useState([]);
   const [selectedContacts, setSelectedContacts] = useState([]);
   const [recordingTime, setRecordingTime] = useState(0);
   const [emergencyStatus, setEmergencyStatus] = useState("idle");
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const recordingTimerRef = useRef(null);
 
+  // 🔹 Auth + User Profile
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setUser(user);
-        loadUserContacts(user.uid);
+        await loadUserProfile(user.uid);
+        await loadUserContacts(user.uid);
       } else {
         setUser(null);
+        setUserName("");
       }
     });
-
     return () => unsubscribe();
   }, []);
+
+  const loadUserProfile = async (userId) => {
+    try {
+      const userDoc = await getDoc(doc(db, "users", userId));
+      if (userDoc.exists()) {
+        setUserName(userDoc.data().name || "User");
+      }
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+    }
+  };
 
   const loadUserContacts = async (userId) => {
     try {
@@ -55,26 +67,12 @@ export default function Home() {
     }
   };
 
-  const handleLogin = () => {
-    navigate("/login");
-  };
-
-  const handleSignOut = async () => {
-    try {
-      await signOut(auth);
-      setUser(null);
-      setIsMenuOpen(false);
-    } catch (error) {
-      console.error("Error signing out:", error);
-    }
-  };
-
+  // 🔹 Emergency Call (SOS logic with recording)
   const handleEmergencyCall = async () => {
     if (!user) {
       alert("Please log in to use emergency features.");
       return;
     }
-
     if (selectedContacts.length === 0) {
       alert("Please select at least one emergency contact first");
       return;
@@ -82,11 +80,9 @@ export default function Home() {
 
     setIsEmergencyMode(true);
     setEmergencyStatus("sending");
-    
+
     try {
       setRecordingTime(0);
-      
-      // Start timer for 10 seconds
       recordingTimerRef.current = setInterval(() => {
         setRecordingTime(prev => {
           if (prev >= 10) {
@@ -105,70 +101,47 @@ export default function Home() {
 
   const stopRecordingAndSendAlert = async () => {
     try {
-      const audioBlob = await simulateAudioRecording();
-      
+      const audioBlob = new Blob([new ArrayBuffer(0)], { type: "audio/webm" });
       const audioRef = ref(storage, `emergency-recordings/${user.uid}/${Date.now()}.webm`);
       await uploadBytes(audioRef, audioBlob);
       const audioUrl = await getDownloadURL(audioRef);
-      
+
       const alertData = {
         userId: user.uid,
         timestamp: Timestamp.now(),
         contacts: selectedContacts,
         audioUrl,
         location: await getCurrentLocation(),
-        status: "sent"
+        status: "sent",
       };
-      
+
       const alertRef = await addDoc(collection(db, "emergencyAlerts"), alertData);
-      
       await updateDoc(doc(db, "users", user.uid), {
-        emergencyAlerts: arrayUnion(alertRef.id)
+        emergencyAlerts: arrayUnion(alertRef.id),
       });
-      
-      await sendNotificationsToContacts(selectedContacts, alertRef.id);
-      
+
       setEmergencyStatus("sent");
-      
+
       setTimeout(() => {
         setIsEmergencyMode(false);
         setEmergencyStatus("idle");
         setRecordingTime(0);
       }, 5000);
-      
     } catch (error) {
       console.error("Error sending emergency alert:", error);
       setEmergencyStatus("error");
     }
   };
 
-  const simulateAudioRecording = () => {
-    return new Blob([new ArrayBuffer(0)], { type: 'audio/webm' });
-  };
-
-  const getCurrentLocation = () => {
-    return new Promise((resolve) => {
+  const getCurrentLocation = () =>
+    new Promise((resolve) => {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
-          (position) => {
-            resolve({
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude
-            });
-          },
-          () => {
-            resolve(null);
-          }
+          (pos) => resolve({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }),
+          () => resolve(null)
         );
-      } else {
-        resolve(null);
-      }
+      } else resolve(null);
     });
-  };
-
-  const sendNotificationsToContacts = async (contacts, alertId) => {
-    console.log("Sending notifications to:", contacts, "Alert ID:", alertId);
-  };
 
   const cancelEmergency = () => {
     clearInterval(recordingTimerRef.current);
@@ -178,214 +151,134 @@ export default function Home() {
   };
 
   return (
-    <div className="home-container">
-      {/* Navigation Bar */}
-      <nav className="navbar">
-        <div className="nav-brand">
-          <div className="logo">
-            <i className="fas fa-shield-alt"></i>
-          </div>
-          <h1>SecureHer</h1>
-        </div>
-        
-        <div className="nav-links">
-          <button 
-            className="nav-link"
-            onClick={() => navigate("/info")}
-          >
-            <i className="fas fa-info-circle"></i>
-            How It Works
-          </button>
-          
-          <button 
-            className="nav-link"
-            onClick={() => navigate("/safety-tips")}
-          >
-            <i className="fas fa-lightbulb"></i>
-            Safety Tips
-          </button>
-          
-          {user ? (
-            <div className="user-menu">
-              <button 
-                className="nav-link"
-                onClick={() => navigate("/profile")}
-              >
-                <i className="fas fa-address-book"></i>
-                Manage Contacts
-              </button>
-              
-              <div className="user-info">
-                <div 
-                  className="user-avatar"
-                  onClick={() => setIsMenuOpen(!isMenuOpen)}
-                >
-                  {user.email ? user.email.charAt(0).toUpperCase() : 'U'}
-                </div>
-                
-                {isMenuOpen && (
-                  <div className="dropdown-menu">
-                    <p className="user-email">{user.email}</p>
-                    <button 
-                      className="dropdown-item"
-                      onClick={() => navigate("/profile")}
-                    >
-                      <i className="fas fa-user-cog"></i>
-                      Profile Settings
-                    </button>
-                    <button 
-                      className="dropdown-item"
-                      onClick={handleSignOut}
-                    >
-                      <i className="fas fa-sign-out-alt"></i>
-                      Sign Out
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          ) : (
-            <button className="nav-link login-btn" onClick={handleLogin}>
-              <i className="fas fa-user"></i>
-              Login / Sign Up
-            </button>
-          )}
-        </div>
-      </nav>
+    <div className="main-container">
+      <div className="home-container">
+        <main className="mobile-main glassy-card">
+          {/* 🔹 Welcome */}
+          <section className="welcome-section">
+            <h1 className="app-title">Secure<span>Her</span></h1>
+            <p className="tagline">Your lifeline in emergencies</p>
+            {user && <p className="welcome-text">Welcome, <strong>{userName}</strong> 👋</p>}
+          </section>
 
-      {/* Main Content */}
-      <div className="main-content">
-        <div className="card">
-          <div className="card-header">
-            <p className="tagline">Your safety is our priority</p>
-          </div>
-          
-          <div className="content">
+          {/* 🔹 Main */}
+          <section className="main-content">
             {!isEmergencyMode ? (
               <>
-                <p className="welcome-text">Welcome to your personal safety app</p>
-                <p className="instruction">Select emergency contacts and press the button in case of emergency</p>
-                
                 {user ? (
                   <>
+                    <p className="instruction">Select contacts & stay protected</p>
                     <ContactSelector 
                       contacts={contacts}
                       selectedContacts={selectedContacts}
                       setSelectedContacts={setSelectedContacts}
                     />
-                    
-                    <EmergencyButton 
-                      onEmergencyCall={handleEmergencyCall} 
-                      disabled={selectedContacts.length === 0}
-                    />
+
+                    {/* ℹ️ Quick Access */}
+                    <div className="more-options">
+                      <h3>Quick Access</h3>
+                      <div className="options-list">
+                        {/* 🚨 Emergency Alert Button (Bell) */}
+                        <button
+                          className="option-btn emergency-bell"
+                          onClick={handleEmergencyCall}
+                        >
+                          <i className="fas fa-bell"></i> Emergency Alert
+                        </button>
+
+                        {/* 🚨 Emergency Call (112) */}
+                        <button
+                          className="option-btn emergency-call"
+                          onClick={() => window.location.href = "tel:112"}
+                        >
+                          <i className="fas fa-phone"></i> Emergency Call (112)
+                        </button>
+
+                        <button className="option-btn" onClick={() => navigate("/info")}>
+                          <i className="fas fa-info-circle"></i> How It Works
+                        </button>
+                        <button className="option-btn" onClick={() => navigate("/safety-tips")}>
+                          <i className="fas fa-shield-alt"></i> Safety Tips
+                        </button>
+                        <button className="option-btn" onClick={() => navigate("/helplines")}>
+                          <i className="fas fa-phone-alt"></i> Emergency Numbers
+                        </button>
+                        <button className="option-btn" onClick={() => navigate("/about")}>
+                          <i className="fas fa-users"></i> About SecureHer
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* 🟢 Safety Tips Section */}
+                    <div className="safety-tips glassy-card">
+                      <h3><i className="fas fa-lightbulb"></i> Safety Tips</h3>
+                      <ul>
+                        <li>Always share your live location with trusted contacts.</li>
+                        <li>Keep your emergency contacts updated.</li>
+                        <li>Stay in well-lit and public areas when possible.</li>
+                        <li>Trust your instincts – leave unsafe situations quickly.</li>
+                      </ul>
+                    </div>
+
+                    {/* 📖 How It Works */}
+                    <div className="how-it-works glassy-card">
+                      <h3><i className="fas fa-info-circle"></i> How SecureHer Works</h3>
+                      <p>Tap the Emergency Alert button to notify contacts, record audio, and share your location instantly.</p>
+                    </div>
+
+                    {/* 🚨 Emergency Helplines */}
+                    <div className="helplines glassy-card">
+                      <h3><i className="fas fa-phone-alt"></i> Emergency Numbers</h3>
+                      <p>Police: <strong>112</strong></p>
+                      <p>Women Helpline: <strong>1090</strong></p>
+                      <p>Ambulance: <strong>108</strong></p>
+                    </div>
+
+                    {/* 👩 About SecureHer */}
+                    <div className="about-app glassy-card">
+                      <h3><i className="fas fa-users"></i> About SecureHer</h3>
+                      <p>SecureHer is a safety-first emergency alert app designed to empower women by providing instant SOS alerts, location sharing, and secure audio evidence.</p>
+                    </div>
                   </>
                 ) : (
-                  <div className="login-prompt">
-                    <div className="login-icon">
-                      <i className="fas fa-lock"></i>
-                    </div>
-                    <p className="login-message">Please log in to access emergency features</p>
-                    <button className="login-btn-prompt" onClick={handleLogin}>
-                      <i className="fas fa-sign-in-alt"></i>
-                      Login to Continue
+                  <div className="login-prompt glassy-card">
+                    <i className="fas fa-lock"></i>
+                    <p>Please log in to access emergency features</p>
+                    <button className="login-btn-prompt" onClick={() => navigate("/login")}>
+                      <i className="fas fa-sign-in-alt"></i> Login to Continue
                     </button>
                   </div>
                 )}
-                
-                <div className="quick-actions">
-                  <h3>Quick Access</h3>
-                  <div className="action-buttons">
-                    <button 
-                      className="action-btn"
-                      onClick={() => navigate("/safety-tips")}
-                    >
-                      <i className="fas fa-lightbulb"></i>
-                      <span>Safety Tips</span>
-                    </button>
-                    
-                    <button 
-                      className="action-btn"
-                      onClick={() => navigate("/info")}
-                    >
-                      <i className="fas fa-info-circle"></i>
-                      <span>How It Works</span>
-                    </button>
-                    
-                    {user && (
-                      <button 
-                        className="action-btn"
-                        onClick={() => navigate("/profile")}
-                      >
-                        <i className="fas fa-address-book"></i>
-                        <span>Manage Contacts</span>
-                      </button>
-                    )}
-                  </div>
-                </div>
               </>
             ) : (
               <div className="emergency-active">
-                <div className="emergency-status">
-                  {emergencyStatus === "sending" && (
-                    <>
-                      <div className="recording-indicator">
-                        <div className="pulse-ring"></div>
-                        <i className="fas fa-microphone"></i>
-                        <span>Recording in progress: {recordingTime}s / 10s</span>
-                      </div>
-                      <div className="progress-bar">
-                        <div 
-                          className="progress-fill" 
-                          style={{ width: `${(recordingTime / 10) * 100}%` }}
-                        ></div>
-                      </div>
-                      <p className="alert-info">Sending alert to {selectedContacts.length} contact(s)...</p>
-                    </>
-                  )}
-                  
-                  {emergencyStatus === "sent" && (
-                    <>
-                      <div className="success-message">
-                        <div className="success-icon">
-                          <i className="fas fa-check-circle"></i>
-                        </div>
-                        <h3>Emergency Alert Sent!</h3>
-                        <p>Your alert has been sent to your selected contacts.</p>
-                        <p>Help is on the way.</p>
-                      </div>
-                    </>
-                  )}
-                  
-                  {emergencyStatus === "error" && (
-                    <>
-                      <div className="error-message">
-                        <div className="error-icon">
-                          <i className="fas fa-exclamation-circle"></i>
-                        </div>
-                        <h3>Error Sending Alert</h3>
-                        <p>Please try again or contact emergency services directly.</p>
-                      </div>
-                      <button className="cancel-btn" onClick={cancelEmergency}>
-                        Try Again
-                      </button>
-                    </>
-                  )}
-                </div>
-                
                 {emergencyStatus === "sending" && (
-                  <button className="cancel-btn" onClick={cancelEmergency}>
-                    <i className="fas fa-times"></i>
-                    Cancel Emergency Alert
-                  </button>
+                  <div className="recording-indicator">
+                    <div className="pulse-ring"></div>
+                    <i className="fas fa-microphone glow"></i>
+                    <span>Recording: {recordingTime}s / 10s</span>
+                    <button className="cancel-btn" onClick={cancelEmergency}>
+                      <i className="fas fa-times"></i> Cancel
+                    </button>
+                  </div>
+                )}
+                {emergencyStatus === "sent" && (
+                  <div className="success-message glassy-card">
+                    <i className="fas fa-check-circle"></i>
+                    <h3>Emergency Alert Sent!</h3>
+                  </div>
+                )}
+                {emergencyStatus === "error" && (
+                  <div className="error-message glassy-card">
+                    <i className="fas fa-exclamation-circle"></i>
+                    <h3>Error Sending Alert</h3>
+                    <button onClick={cancelEmergency}>Try Again</button>
+                  </div>
                 )}
               </div>
             )}
-          </div>
-          
-          <footer className="footer">
-            <p>Powered by SecureHer & C-DAC Thiruvananthapuram</p>
-          </footer>
-        </div>
+          </section>
+        </main>
       </div>
     </div>
   );
