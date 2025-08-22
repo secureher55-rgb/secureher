@@ -18,12 +18,14 @@ $gray-800: #343a40;
 $glass-gradient: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
 $primary-gradient: linear-gradient(45deg, $primary 0%, lighten($primary, 10%) 100%);
 $secondary-gradient: linear-gradient(45deg, $secondary 0%, lighten($secondary, 5%) 100%);
+$background-gradient: linear-gradient(160deg, $dark 0%, $secondary 100%);
 
 // Shadows
 $shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
 $shadow-md: 0 4px 16px rgba(0, 0, 0, 0.15);
 $shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
 $glow-primary: 0 0 15px rgba($primary, 0.5);
+$glow-accent: 0 0 15px rgba($accent, 0.4);
 
 // Breakpoints
 $mobile: 576px;
@@ -40,10 +42,10 @@ $large: 1200px;
 
 @mixin glass-effect {
   background: $glass-gradient;
-  backdrop-filter: blur(10px);
-  border-radius: 16px;
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
   box-shadow: $shadow-md;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 @mixin button-primary {
@@ -51,15 +53,33 @@ $large: 1200px;
   color: white;
   border: none;
   border-radius: 50px;
-  padding: 0.8rem 1.8rem;
+  padding: 1rem 2rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: $shadow-sm;
+  font-size: 1.1rem;
+  position: relative;
+  overflow: hidden;
+  
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: 0.5s;
+  }
   
   &:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
     box-shadow: $glow-primary;
+    
+    &:before {
+      left: 100%;
+    }
   }
   
   &:active {
@@ -79,24 +99,50 @@ $large: 1200px;
 }
 
 // ===== GLOBAL STYLES =====
+* {
+  box-sizing: border-box;
+}
+
 .main-container {
+  margin-top: 65px !important;
   min-height: 100vh;
-  background: linear-gradient(160deg, $dark 0%, $secondary 100%);
+  background: $background-gradient;
   padding: 0;
   margin: 0;
   font-family: 'Poppins', sans-serif;
   color: $light;
   line-height: 1.6;
+  overflow-x: hidden;
 }
 
 .home-container {
-  background: linear-gradient(135deg, rgba(221, 113, 216, 0.1) 0%) !important;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   padding: 1rem;
   max-width: 1200px;
   margin: 0 auto;
+  position: relative;
+  
+  // Subtle background pattern
+  &:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+      radial-gradient(circle at 15% 50%, rgba(69, 123, 157, 0.1) 0%, transparent 25%),
+      radial-gradient(circle at 85% 30%, rgba(230, 57, 70, 0.1) 0%, transparent 25%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  
+  > * {
+    position: relative;
+    z-index: 1;
+  }
   
   @media (min-width: $tablet) {
     padding: 2rem;
@@ -105,10 +151,9 @@ $large: 1200px;
 
 // ===== GLASSY CARD STYLES =====
 .glassy-card {
- 
   @include glass-effect;
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
+  padding: 2rem;
+  margin-bottom: 2rem;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   
   &:hover {
@@ -118,14 +163,20 @@ $large: 1200px;
   
   h3 {
     color: $accent;
-    margin-bottom: 1rem;
+    margin-bottom: 1.2rem;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 1.3rem;
+    gap: 0.8rem;
+    font-size: 1.4rem;
+    font-weight: 600;
     
     i {
-      font-size: 1.1rem;
+      font-size: 1.2rem;
+      width: 30px;
+      height: 30px;
+      @include flex-center;
+      background: rgba($accent, 0.1);
+      border-radius: 50%;
     }
   }
 }
@@ -133,16 +184,17 @@ $large: 1200px;
 // ===== WELCOME SECTION =====
 .welcome-section {
   text-align: center;
-  margin: 2rem 0;
+  margin: 2.5rem 0 3rem;
   
   .app-title {
-    font-size: 2.5rem;
+    font-size: 3rem;
     font-weight: 800;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.8rem;
     background: linear-gradient(45deg, $primary, $accent);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    letter-spacing: 1px;
     
     span {
       color: $light;
@@ -150,25 +202,28 @@ $large: 1200px;
     }
     
     @media (min-width: $tablet) {
-      font-size: 3.5rem;
+      font-size: 4rem;
     }
   }
   
   .tagline {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     opacity: 0.9;
-    margin-bottom: 1rem;
+    margin-bottom: 1.2rem;
+    font-weight: 300;
     
     @media (min-width: $tablet) {
-      font-size: 1.5rem;
+      font-size: 1.7rem;
     }
   }
   
   .welcome-text {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
+    margin-top: 1rem;
     
     strong {
       color: $accent;
+      font-weight: 600;
     }
   }
 }
@@ -177,43 +232,51 @@ $large: 1200px;
 .main-content {
   flex: 1;
   width: 100%;
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
+  padding: 1rem 0;
 }
 
 .instruction {
   text-align: center;
-  margin-bottom: 1.5rem;
-  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  font-size: 1.2rem;
   opacity: 0.9;
+  font-weight: 500;
 }
 
 // ===== CONTACT SELECTOR =====
 .contact-selector {
   @include glass-effect;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
+  padding: 2rem;
+  margin-bottom: 2.5rem;
   
   h3 {
     color: $accent;
-    margin-bottom: 1rem;
-    text-align: center  !important;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 1.5rem;
+    
+    i {
+      margin-right: 0.5rem;
+    }
   }
   
   .contacts-list {
     display: grid;
-    gap: 0.8rem;
+    gap: 1rem;
     max-height: 300px;
     overflow-y: auto;
-    padding-right: 0.5rem;
+    padding-right: 0.8rem;
+    margin-bottom: 1.5rem;
     
     /* Custom scrollbar */
     &::-webkit-scrollbar {
-      width: 6px;
+      width: 8px;
     }
     
     &::-webkit-scrollbar-track {
-      background: rgba($light, 0.1);
+      background: rgba($light, 0.08);
       border-radius: 10px;
     }
     
@@ -226,30 +289,33 @@ $large: 1200px;
   .contact-item {
     display: flex;
     align-items: center;
-    padding: 0.8rem;
-    border-radius: 10px;
-    background: rgba($light, 0.05);
-    transition: background 0.3s ease;
+    padding: 1rem;
+    border-radius: 12px;
+    background: rgba($light, 0.07);
+    transition: all 0.3s ease;
     cursor: pointer;
     
     &:hover {
-      background: rgba($accent, 0.2);
+      background: rgba($accent, 0.15);
+      transform: translateX(5px);
     }
     
     &.selected {
-      background: rgba($accent, 0.3);
-      border: 1px solid $accent;
+      background: rgba($accent, 0.25);
+      border: 1px solid rgba($accent, 0.5);
       
       .contact-name {
         color: $light;
+        font-weight: 600;
       }
     }
     
     input[type="checkbox"] {
-      margin-right: 0.8rem;
-      width: 18px;
-      height: 18px;
+      margin-right: 1rem;
+      width: 20px;
+      height: 20px;
       accent-color: $accent;
+      cursor: pointer;
     }
     
     .contact-info {
@@ -257,11 +323,12 @@ $large: 1200px;
       
       .contact-name {
         font-weight: 500;
-        margin-bottom: 0.2rem;
+        margin-bottom: 0.3rem;
+        transition: color 0.3s ease;
       }
       
       .contact-phone {
-        font-size: 0.9rem;
+        font-size: 0.95rem;
         opacity: 0.8;
       }
     }
@@ -269,11 +336,12 @@ $large: 1200px;
   
   .no-contacts {
     text-align: center;
-    padding: 1.5rem;
-    opacity: 0.7;
+    padding: 2rem;
+    opacity: 0.8;
     
     p {
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
+      font-size: 1.1rem;
     }
     
     button {
@@ -290,53 +358,37 @@ $large: 1200px;
 // ===== EMERGENCY BUTTON =====
 .emergency-button {
   text-align: center;
-  margin: 2.5rem 0;
+  margin: 3rem 0;
   
   button {
     @include button-primary;
-    padding: 1.2rem 2.5rem;
-    font-size: 1.2rem;
-    position: relative;
-    overflow: hidden;
-    z-index: 1;
-    
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-      transition: 0.5s;
-      z-index: -1;
-    }
-    
-    &:hover::before {
-      left: 100%;
-    }
+    padding: 1.5rem 3rem;
+    font-size: 1.4rem;
+    min-width: 280px;
     
     i {
-      margin-right: 0.5rem;
+      margin-right: 0.8rem;
+      font-size: 1.3rem;
     }
   }
 }
 
 // ===== MORE OPTIONS =====
 .more-options {
-  margin: 2rem 0;
+  margin: 3rem 0;
   
   h3 {
     text-align: center;
-    margin-bottom: 1.2rem;
+    margin-bottom: 1.8rem;
     color: $accent;
-    font-size: 1.3rem;
+    font-size: 1.5rem;
+    font-weight: 600;
   }
   
   .options-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.2rem;
     
     @media (max-width: $mobile) {
       grid-template-columns: 1fr;
@@ -345,25 +397,31 @@ $large: 1200px;
   
   .option-btn {
     @include glass-effect;
-    padding: 1rem;
+    padding: 1.2rem;
     display: flex;
     align-items: center;
-    gap: 0.8rem;
+    gap: 1rem;
     cursor: pointer;
     transition: all 0.3s ease;
     border: none;
     color: $light;
     text-align: left;
-    font-size: 0.95rem;
+    font-size: 1rem;
     
     &:hover {
-      transform: translateY(-3px);
+      transform: translateY(-5px);
       background: rgba($accent, 0.2);
+      box-shadow: $glow-accent;
     }
     
     i {
-      font-size: 1.2rem;
+      font-size: 1.4rem;
       color: $accent;
+      width: 40px;
+      height: 40px;
+      @include flex-center;
+      background: rgba($accent, 0.1);
+      border-radius: 12px;
     }
   }
 }
@@ -374,11 +432,14 @@ $large: 1200px;
     padding-left: 1.5rem;
     
     li {
-      margin-bottom: 0.8rem;
+      margin-bottom: 1rem;
       position: relative;
+      padding-left: 0.5rem;
+      line-height: 1.6;
       
       &::marker {
         color: $accent;
+        font-size: 1.2rem;
       }
     }
   }
@@ -387,22 +448,32 @@ $large: 1200px;
 // ===== HOW IT WORKS =====
 .how-it-works {
   p {
-    line-height: 1.6;
+    line-height: 1.7;
     opacity: 0.9;
+    font-size: 1.05rem;
   }
 }
 
 // ===== HELPLINES =====
 .helplines {
   p {
-    margin-bottom: 0.8rem;
+    margin-bottom: 1rem;
     display: flex;
     justify-content: space-between;
-    max-width: 250px;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba($light, 0.1);
+    
+    &:last-child {
+      border-bottom: none;
+    }
     
     strong {
       color: $primary;
-      font-size: 1.1rem;
+      font-size: 1.2rem;
+      background: rgba($primary, 0.1);
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
     }
   }
 }
@@ -410,73 +481,89 @@ $large: 1200px;
 // ===== ABOUT APP =====
 .about-app {
   p {
-    line-height: 1.6;
+    line-height: 1.7;
     opacity: 0.9;
+    font-size: 1.05rem;
   }
 }
 
 // ===== LOGIN PROMPT =====
 .login-prompt {
+  @include glass-effect;
   text-align: center;
-  padding: 2.5rem 1.5rem;
+  padding: 3rem 2rem;
+  margin: 2rem 0;
   
   i {
-    font-size: 2.5rem;
+    font-size: 3rem;
     color: $accent;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    display: inline-block;
+    background: rgba($accent, 0.1);
+    width: 80px;
+    height: 80px;
+    @include flex-center;
+    border-radius: 50%;
   }
   
   p {
-    margin-bottom: 1.5rem;
-    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    font-size: 1.2rem;
+    opacity: 0.9;
   }
   
   .login-btn-prompt {
     @include button-primary;
-    padding: 1rem 2rem;
-    font-size: 1.1rem;
+    padding: 1rem 2.5rem;
+    font-size: 1.2rem;
     
     i {
       font-size: 1rem;
-      margin-right: 0.5rem;
-      margin-bottom: 0;
-      color: white;
+      margin-right: 0.8rem;
+      width: auto;
+      height: auto;
+      background: transparent;
     }
   }
 }
 
 // ===== EMERGENCY ACTIVE =====
 .emergency-active {
+  @include glass-effect;
   text-align: center;
-  padding: 2rem;
+  padding: 3rem 2rem;
+  margin: 2rem auto;
+  max-width: 500px;
   
   .recording-indicator {
     .pulse-ring {
-      width: 120px;
-      height: 120px;
+      width: 140px;
+      height: 140px;
       border-radius: 50%;
-      border: 8px solid rgba($primary, 0.3);
-      margin: 0 auto 1.5rem;
+      border: 10px solid rgba($primary, 0.3);
+      margin: 0 auto 2rem;
       position: relative;
       animation: pulse 1.5s infinite;
       
       @include flex-center;
       
       i {
-        font-size: 2.5rem;
+        font-size: 3rem;
         color: $primary;
       }
     }
     
     span {
       display: block;
-      margin-bottom: 1.5rem;
-      font-size: 1.1rem;
+      margin-bottom: 2rem;
+      font-size: 1.2rem;
+      font-weight: 500;
     }
     
     .cancel-btn {
       @include button-primary;
       background: rgba($error, 0.8);
+      padding: 0.8rem 1.8rem;
       
       &:hover {
         background: $error;
@@ -492,13 +579,15 @@ $large: 1200px;
     padding: 2rem;
     
     i {
-      font-size: 3rem;
-      margin-bottom: 1rem;
+      font-size: 3.5rem;
+      margin-bottom: 1.5rem;
+      display: block;
     }
     
     h3 {
       margin-bottom: 1.5rem;
       color: inherit;
+      font-size: 1.5rem;
     }
   }
   
@@ -526,10 +615,10 @@ $large: 1200px;
 // ===== FLOATING EMERGENCY BUTTON =====
 .floating-emergency-btn {
   position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  width: 70px;
-  height: 70px;
+  bottom: 2.5rem;
+  right: 2.5rem;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   background: $primary-gradient;
   color: white;
@@ -538,20 +627,21 @@ $large: 1200px;
   cursor: pointer;
   z-index: 1000;
   @include flex-center;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   transition: all 0.3s ease;
   animation: pulse 2s infinite;
   
   &:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 25px rgba($primary, 0.7);
+    transform: scale(1.15) rotate(5deg);
+    box-shadow: 0 0 30px rgba($primary, 0.8);
   }
   
   @media (max-width: $tablet) {
-    bottom: 1.5rem;
-    right: 1.5rem;
-    width: 60px;
-    height: 60px;
+    bottom: 2rem;
+    right: 2rem;
+    width: 70px;
+    height: 70px;
+    font-size: 1.6rem;
   }
 }
 
@@ -561,7 +651,7 @@ $large: 1200px;
     box-shadow: 0 0 0 0 rgba($primary, 0.7);
   }
   70% {
-    box-shadow: 0 0 0 15px rgba($primary, 0);
+    box-shadow: 0 0 0 20px rgba($primary, 0);
   }
   100% {
     box-shadow: 0 0 0 0 rgba($primary, 0);
@@ -584,6 +674,40 @@ $large: 1200px;
 // ===== RESPONSIVE DESIGN =====
 @media (max-width: $tablet) {
   .home-container {
+    padding: 1.5rem;
+  }
+  
+  .welcome-section {
+    margin: 2rem 0;
+    
+    .app-title {
+      font-size: 2.5rem;
+    }
+    
+    .tagline {
+      font-size: 1.3rem;
+    }
+  }
+  
+  .more-options {
+    .options-list {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .floating-emergency-btn {
+    width: 65px;
+    height: 65px;
+    font-size: 1.5rem;
+  }
+  
+  .glassy-card {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: $mobile) {
+  .home-container {
     padding: 1rem;
   }
   
@@ -597,34 +721,17 @@ $large: 1200px;
     }
   }
   
-  .more-options {
-    .options-list {
-      grid-template-columns: 1fr;
-    }
-  }
-  
-  .floating-emergency-btn {
-    width: 60px;
-    height: 60px;
-    font-size: 1.3rem;
-  }
-}
-
-@media (max-width: $mobile) {
-  .welcome-section {
-    .app-title {
-      font-size: 2rem;
-    }
-  }
-  
   .emergency-button {
     button {
       width: 100%;
-      padding: 1rem;
+      padding: 1.2rem;
+      font-size: 1.2rem;
     }
   }
   
   .contact-selector {
+    padding: 1.5rem;
+    
     .contacts-list {
       max-height: 250px;
     }
@@ -662,4 +769,20 @@ $large: 1200px;
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+// Loading spinner
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba($light, 0.3);
+  border-radius: 50%;
+  border-top-color: $light;
+  animation: spin 1s ease-in-out infinite;
+  margin-right: 0.5rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }

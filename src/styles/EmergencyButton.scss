@@ -1,110 +1,202 @@
-// EmergencyButton.scss
-@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+// src/styles/EmergencyButton.scss
 
-// Color variables
-$emergency-red: #d32f2f;
-$dark-red: #b71c1c;
-$white: #ffffff;
-
-// Keyframes for emergency button pulse
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.7);
-  }
-  70% {
-    transform: scale(1.05);
-    box-shadow: 0 0 0 20px rgba(211, 47, 47, 0);
-  }
-  100% {
-    transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(211, 47, 47, 0);
-  }
-}
+// Import variables if not already globally available
+@import './variables';
 
 .emergency-button-container {
-  margin: 20px 0;
-  
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 2rem 0;
+  padding: 1rem;
+
   .emergency-btn {
+    position: relative;
+    background: linear-gradient(145deg, #ff3b30, #d70015);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 1.2rem 2.5rem;
+    font-size: 1.3rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 20px rgba(255, 59, 48, 0.4);
+    min-width: 280px;
+    min-height: 60px;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
-    background: $white;
-    border: none;
-    border-radius: 16px;
-    padding: 20px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-    animation: pulse 2s infinite;
-    
-    .btn-inner {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    overflow: hidden;
+    z-index: 1;
+
+    &:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(145deg, #d70015, #ff3b30);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: -1;
+    }
+
+    &:hover:not(:disabled) {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(255, 59, 48, 0.6);
       
-      .secureher-logo {
-        width: 80px;
-        height: 80px;
-        background: linear-gradient(135deg, $emergency-red 0%, $dark-red 100%);
-        border-radius: 50%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-bottom: 15px;
-        
-        i {
-          font-size: 40px;
-          color: $white;
-        }
-      }
-      
-      .call-text {
-        font-size: 20px;
-        font-weight: 700;
-        color: $emergency-red;
+      &:before {
+        opacity: 1;
       }
     }
-    
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.35);
-    }
-    
-    &:active {
+
+    &:active:not(:disabled) {
       transform: translateY(1px);
+      box-shadow: 0 4px 15px rgba(255, 59, 48, 0.4);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.8;
+    }
+
+    // Status-specific styles
+    &[data-status="default"] {
+      background: linear-gradient(145deg, #ff3b30, #d70015);
+      
+      &:before {
+        background: linear-gradient(145deg, #d70015, #ff3b30);
+      }
+    }
+
+    &[data-status="recording"] {
+      background: linear-gradient(145deg, #ff9500, #ff3b30);
+      box-shadow: 0 6px 20px rgba(255, 149, 0, 0.4);
+      
+      &:before {
+        background: linear-gradient(145deg, #ff3b30, #ff9500);
+      }
+    }
+
+    &[data-status="uploading"] {
+      background: linear-gradient(145deg, #007aff, #0056b3);
+      box-shadow: 0 6px 20px rgba(0, 122, 255, 0.4);
+      
+      &:before {
+        background: linear-gradient(145deg, #0056b3, #007aff);
+      }
+    }
+
+    &[data-status="sent"] {
+      background: linear-gradient(145deg, #34c759, #248a3d);
+      box-shadow: 0 6px 20px rgba(52, 199, 89, 0.4);
+      
+      &:before {
+        background: linear-gradient(145deg, #248a3d, #34c759);
+      }
+    }
+
+    &[data-status="error"] {
+      background: linear-gradient(145deg, #ff3b30, #d70015);
+      animation: shake 0.5s ease-in-out;
+      
+      &:before {
+        background: linear-gradient(145deg, #d70015, #ff3b30);
+      }
+    }
+
+    // Pulsing animation for emergency state
+    &.pulsing {
+      animation: pulse 2s infinite;
+    }
+
+    // Icon styling
+    .btn-icon {
+      margin-right: 0.5rem;
+      font-size: 1.2em;
+    }
+  }
+
+  // Status indicator
+  .status-indicator {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    opacity: 0.9;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    
+    &.recording {
+      color: #ff9500;
     }
     
-    &.calling {
-      animation: none;
-      background: darken($white, 5%);
-      
-      .secureher-logo i {
-        animation: fa-spin 1s infinite linear;
-      }
+    &.uploading {
+      color: #007aff;
+    }
+    
+    &.sent {
+      color: #34c759;
+    }
+    
+    &.error {
+      color: #ff3b30;
     }
   }
 }
 
-// Responsive adjustments
-@media (max-width: 480px) {
+// Animations
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.7);
+  }
+  70% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 15px rgba(255, 59, 48, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 59, 48, 0);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-5px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(5px);
+  }
+}
+
+// If variables aren't globally available, define them here
+$primary: #e63946 !default;
+$secondary: #1d3557 !default;
+$accent: #457b9d !default;
+$success: #06d6a0 !default;
+$warning: #ffd166 !default;
+$error: #ef476f !default;
+$light: #f8f9fa !default;
+$dark: #0b132b !default;
+
+// Responsive design
+@media (max-width: 576px) {
   .emergency-button-container {
+    margin: 1.5rem 0;
+    
     .emergency-btn {
-      .btn-inner {
-        .secureher-logo {
-          width: 70px;
-          height: 70px;
-          
-          i {
-            font-size: 35px;
-          }
-        }
-        
-        .call-text {
-          font-size: 18px;
-        }
-      }
+      min-width: 240px;
+      padding: 1rem 2rem;
+      font-size: 1.1rem;
     }
   }
 }

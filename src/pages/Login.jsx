@@ -21,6 +21,7 @@ const AuthPage = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const handleChange = (e) => {
     setFormData({
@@ -33,6 +34,7 @@ const AuthPage = () => {
   const toggleMode = () => {
     setIsLoginMode(!isLoginMode);
     setError("");
+    setSuccessMessage("");
     setFormData({
       name: "",
       email: "",
@@ -73,6 +75,7 @@ const AuthPage = () => {
 
     setIsLoading(true);
     setError("");
+    setSuccessMessage("");
 
     try {
       if (isLoginMode) {
@@ -101,7 +104,8 @@ const AuthPage = () => {
           emergencyContacts: [],
           emergencyAlerts: []
         });
-        navigate("/");
+        setSuccessMessage("Account created successfully! Redirecting...");
+        setTimeout(() => navigate("/"), 1500);
       }
     } catch (error) {
       console.error("Auth error:", error);
@@ -117,11 +121,14 @@ const AuthPage = () => {
       return;
     }
     try {
+      setIsLoading(true);
       await sendPasswordResetEmail(auth, formData.email);
-      alert("Password reset email sent! Check your inbox.");
+      setSuccessMessage("Password reset email sent! Check your inbox.");
     } catch (error) {
       console.error("Password reset error:", error);
       setError(getErrorMessage(error.code));
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -148,32 +155,49 @@ const AuthPage = () => {
 
   return (
     <div className="auth-container">
-      <div className="login-card">
-        <div className="login-header text-center mb-6">
-          <div className="logo text-4xl mb-2">
+      <div className="auth-background">
+        <div className="auth-background-shapes">
+          <div className="shape shape-1"></div>
+          <div className="shape shape-2"></div>
+          <div className="shape shape-3"></div>
+        </div>
+      </div>
+      
+      <div className="auth-card glassy-card">
+        <div className="auth-header">
+          <div className="auth-logo">
             <i className="fas fa-shield-alt"></i>
           </div>
-          <h1 className="title">
-            {isLoginMode ? "SecureHer Login" : "Create Account"}
+          <h1 className="auth-title">
+            {isLoginMode ? "Welcome Back" : "Create Account"}
           </h1>
-          <p className="subtitle">
+          <p className="auth-subtitle">
             {isLoginMode
-              ? "Access your safety account"
+              ? "Sign in to continue to SecureHer"
               : "Join SecureHer for your safety"}
           </p>
         </div>
 
         {error && (
-          <div className="error-message">
+          <div className="auth-message error-message">
             <i className="fas fa-exclamation-circle"></i>
-            {error}
+            <span>{error}</span>
           </div>
         )}
 
-        <form className="form" onSubmit={handleSubmit}>
+        {successMessage && (
+          <div className="auth-message success-message">
+            <i className="fas fa-check-circle"></i>
+            <span>{successMessage}</span>
+          </div>
+        )}
+
+        <form className="auth-form" onSubmit={handleSubmit}>
           {!isLoginMode && (
-            <div>
-              <label>Full Name</label>
+            <div className="form-group">
+              <label className="form-label">
+                <i className="fas fa-user"></i> Full Name
+              </label>
               <input
                 type="text"
                 name="name"
@@ -181,12 +205,15 @@ const AuthPage = () => {
                 onChange={handleChange}
                 placeholder="Enter your full name"
                 disabled={isLoading}
+                className="form-input"
               />
             </div>
           )}
 
-          <div>
-            <label>Email</label>
+          <div className="form-group">
+            <label className="form-label">
+              <i className="fas fa-envelope"></i> Email Address
+            </label>
             <input
               type="email"
               name="email"
@@ -194,11 +221,14 @@ const AuthPage = () => {
               onChange={handleChange}
               placeholder="Enter your email"
               disabled={isLoading}
+              className="form-input"
             />
           </div>
 
-          <div>
-            <label>Password</label>
+          <div className="form-group">
+            <label className="form-label">
+              <i className="fas fa-lock"></i> Password
+            </label>
             <input
               type="password"
               name="password"
@@ -206,12 +236,15 @@ const AuthPage = () => {
               onChange={handleChange}
               placeholder="Enter your password"
               disabled={isLoading}
+              className="form-input"
             />
           </div>
 
           {!isLoginMode && (
-            <div>
-              <label>Confirm Password</label>
+            <div className="form-group">
+              <label className="form-label">
+                <i className="fas fa-lock"></i> Confirm Password
+              </label>
               <input
                 type="password"
                 name="confirmPassword"
@@ -219,19 +252,21 @@ const AuthPage = () => {
                 onChange={handleChange}
                 placeholder="Confirm your password"
                 disabled={isLoading}
+                className="form-input"
               />
             </div>
           )}
 
           {isLoginMode && (
-            <div className="options">
-              <label className="remember">
+            <div className="form-options">
+              <label className="checkbox-container">
                 <input type="checkbox" disabled={isLoading} />
-                <span>Remember me</span>
+                <span className="checkmark"></span>
+                Remember me
               </label>
               <button
                 type="button"
-                className="forgot"
+                className="forgot-password"
                 onClick={handleForgotPassword}
                 disabled={isLoading}
               >
@@ -240,21 +275,55 @@ const AuthPage = () => {
             </div>
           )}
 
-          <button type="submit" className="submit-btn" disabled={isLoading}>
-            {isLoading
-              ? isLoginMode
-                ? "Logging in..."
-                : "Creating account..."
-              : isLoginMode
-              ? "Login"
-              : "Sign Up"}
+          <button 
+            type="submit" 
+            className="auth-submit-btn"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <>
+                <i className="fas fa-spinner fa-spin"></i>
+                {isLoginMode ? "Signing in..." : "Creating account..."}
+              </>
+            ) : isLoginMode ? (
+              <>
+                <i className="fas fa-sign-in-alt"></i>
+                Sign In
+              </>
+            ) : (
+              <>
+                <i className="fas fa-user-plus"></i>
+                Create Account
+              </>
+            )}
           </button>
         </form>
 
-        <div className="switch-mode">
-          {isLoginMode ? "Don't have an account? " : "Already have an account? "}
-          <button type="button" onClick={toggleMode}>
-            {isLoginMode ? "Sign up" : "Login"}
+        <div className="auth-switch">
+          <p>
+            {isLoginMode ? "Don't have an account? " : "Already have an account? "}
+            <button 
+              type="button" 
+              onClick={toggleMode}
+              className="switch-mode-btn"
+            >
+              {isLoginMode ? "Sign up" : "Sign in"}
+            </button>
+          </p>
+        </div>
+
+        <div className="auth-divider">
+          <span>Or continue with</span>
+        </div>
+
+        <div className="social-auth">
+          <button className="social-btn google-btn" disabled={isLoading}>
+            <i className="fab fa-google"></i>
+            Google
+          </button>
+          <button className="social-btn facebook-btn" disabled={isLoading}>
+            <i className="fab fa-facebook-f"></i>
+            Facebook
           </button>
         </div>
       </div>
