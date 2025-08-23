@@ -4,9 +4,11 @@ import {
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
-  updateProfile
+  updateProfile,
+  signInWithPhoneNumber,
+  RecaptchaVerifier
 } from "firebase/auth";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, query, collection, where, getDocs } from "firebase/firestore";
 import { auth, db } from "../firebase/config";
 import "../styles/login.scss";
 
@@ -16,12 +18,16 @@ const AuthPage = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    mobile: "",
     password: "",
     confirmPassword: ""
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [verificationId, setVerificationId] = useState("");
 
   const handleChange = (e) => {
     setFormData({
@@ -31,13 +37,19 @@ const AuthPage = () => {
     if (error) setError("");
   };
 
+  const handleOtpChange = (e) => {
+    setOtp(e.target.value);
+  };
+
   const toggleMode = () => {
     setIsLoginMode(!isLoginMode);
     setError("");
     setSuccessMessage("");
+    setOtpSent(false);
     setFormData({
       name: "",
       email: "",
+      mobile: "",
       password: "",
       confirmPassword: ""
     });
@@ -49,6 +61,10 @@ const AuthPage = () => {
         setError("Please enter your name");
         return false;
       }
+      if (!formData.mobile.trim()) {
+        setError("Please enter your mobile number");
+        return false;
+      }
       if (formData.password !== formData.confirmPassword) {
         setError("Passwords do not match");
         return false;
@@ -58,15 +74,39 @@ const AuthPage = () => {
         return false;
       }
     }
-    if (!formData.email) {
+    
+    if (isLoginMode && !formData.mobile && !formData.email) {
+      setError("Please enter your email or mobile number");
+      return false;
+    }
+    
+    if (!isLoginMode && !formData.email) {
       setError("Please enter your email address");
       return false;
     }
+    
     if (!formData.password) {
       setError("Please enter your password");
       return false;
     }
     return true;
+  };
+
+  // Function to find user by mobile number
+  const findUserByMobile = async (mobile) => {
+    try {
+      const usersRef = collection(db, "users");
+      const q = query(usersRef, where("mobile", "==", mobile));
+      const querySnapshot = await getDocs(q);
+      
+      if (!querySnapshot.empty) {
+        return querySnapshot.docs[0].data();
+      }
+      return null;
+    } catch (error) {
+      console.error("Error finding user by mobile:", error);
+      return null;
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -79,31 +119,60 @@ const AuthPage = () => {
 
     try {
       if (isLoginMode) {
-        const userCredential = await signInWithEmailAndPassword(
-          auth, 
-          formData.email, 
-          formData.password
-        );
-        const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
-        if (userDoc.exists()) console.log("User data:", userDoc.data());
-        navigate("/");
+        // Check if user is trying to login with mobile number
+        if (formData.mobile) {
+          // Look up user by mobile number to get their email
+          const userData = await findUserByMobile(formData.mobile);
+          
+          if (!userData || !userData.email) {
+            setError("No account found with this mobile number");
+            setIsLoading(false);
+            return;
+          }
+          
+          // Sign in with email and password using the email associated with the mobile number
+          const userCredential = await signInWithEmailAndPassword(
+            auth, 
+            userData.email, 
+            formData.password
+          );
+          
+          const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
+          if (userDoc.exists()) console.log("User data:", userDoc.data());
+          navigate("/");
+        } else {
+          // Regular email login
+          const userCredential = await signInWithEmailAndPassword(
+            auth, 
+            formData.email, 
+            formData.password
+          );
+          const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
+          if (userDoc.exists()) console.log("User data:", userDoc.data());
+          navigate("/");
+        }
       } else {
+        // Sign up with email and mobile
         const userCredential = await createUserWithEmailAndPassword(
           auth,
           formData.email,
           formData.password
         );
+        
         await updateProfile(userCredential.user, {
           displayName: formData.name
         });
+        
         await setDoc(doc(db, "users", userCredential.user.uid), {
           uid: userCredential.user.uid,
           name: formData.name,
           email: formData.email,
+          mobile: formData.mobile,
           createdAt: new Date(),
           emergencyContacts: [],
           emergencyAlerts: []
         });
+        
         setSuccessMessage("Account created successfully! Redirecting...");
         setTimeout(() => navigate("/"), 1500);
       }
@@ -148,6 +217,8 @@ const AuthPage = () => {
         return "Password is too weak. Please use a stronger password.";
       case "auth/too-many-requests":
         return "Too many failed attempts. Please try again later.";
+      case "auth/invalid-phone-number":
+        return "Invalid phone number format.";
       default:
         return "An error occurred. Please try again.";
     }
@@ -210,16 +281,34 @@ const AuthPage = () => {
             </div>
           )}
 
+          {!isLoginMode && (
+            <div className="form-group">
+              <label className="form-label">
+                <i className="fas fa-envelope"></i> Email Address
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Enter your email"
+                disabled={isLoading}
+                className="form-input"
+              />
+            </div>
+          )}
+
           <div className="form-group">
             <label className="form-label">
-              <i className="fas fa-envelope"></i> Email Address
+              <i className="fas fa-mobile-alt"></i> 
+              {isLoginMode ? "Email or Mobile Number" : "Mobile Number"}
             </label>
             <input
-              type="email"
-              name="email"
-              value={formData.email}
+              type="text"
+              name="mobile"
+              value={formData.mobile}
               onChange={handleChange}
-              placeholder="Enter your email"
+              placeholder={isLoginMode ? "Enter your email or mobile number" : "Enter your mobile number"}
               disabled={isLoading}
               className="form-input"
             />

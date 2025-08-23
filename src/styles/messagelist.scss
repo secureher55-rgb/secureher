@@ -1,0 +1,66 @@
+.message-list {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    background: #0f0f0f;
+    scrollbar-width: thin;
+    scrollbar-color: #333 #0f0f0f;
+  
+    /* Chrome/Edge/ Safari scrollbar */
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #333;
+      border-radius: 6px;
+    }
+  }
+  
+  .message {
+    max-width: 70%;
+    padding: 0.7rem 1rem;
+    border-radius: 16px;
+    font-size: 14px;
+    line-height: 1.4;
+    position: relative;
+    word-wrap: break-word;
+  
+    &.sent {
+      align-self: flex-end;
+      background: linear-gradient(135deg, #4a90e2, #357ab7);
+      color: #fff;
+      border-bottom-right-radius: 6px;
+      box-shadow: 0 2px 6px rgba(74, 144, 226, 0.4);
+    }
+  
+    &.received {
+      align-self: flex-start;
+      background: #1e1e1e;
+      color: #f5f5f5;
+      border-bottom-left-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+  
+    .message-content {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+  
+    .timestamp {
+      font-size: 11px;
+      color: #aaa;
+      align-self: flex-end;
+    }
+  }
+  
+  .no-messages {
+    text-align: center;
+    color: #888;
+    margin-top: 2rem;
+    font-size: 14px;
+  }
+  

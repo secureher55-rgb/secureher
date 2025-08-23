@@ -124,60 +124,6 @@ export default function ManageContacts() {
           {saving ? "Saving..." : "Add Contact"}
         </button>
       </form>
-
-      {/* 🔹 Contact Lists */}
-      <div className="contact-lists">
-        {/* 🔹 Full Contact List */}
-        <div className="contact-list">
-          <h3>All Contacts</h3>
-          {contacts.length > 0 ? (
-            <div className="all-contacts-list">
-              <ul>
-                {contacts.map((c) => (
-                  <li key={c.id}>
-                    <div className="contact-info">
-                      <div className="contact-name">{c.name}</div>
-                      <div className="contact-phone">{c.phone}</div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : (
-            <div className="empty-state">
-              <i className="fas fa-address-book"></i>
-              <p>No contacts added yet.</p>
-            </div>
-          )}
-        </div>
-
-        {/* 🔹 Selected Contacts */}
-        <div className="contact-list">
-          <h3>Selected Contacts</h3>
-          {selectedContacts.length > 0 ? (
-            <div className="selected-contacts-list">
-              <ul>
-                {selectedContacts.map((id) => {
-                  const c = contacts.find((ct) => ct.id === id);
-                  return (
-                    <li key={id}>
-                      <div className="contact-info">
-                        <div className="contact-name">{c?.name || "Unknown"}</div>
-                        <div className="contact-phone">{c?.phone || "No number"}</div>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          ) : (
-            <div className="empty-state">
-              <i className="fas fa-check-circle"></i>
-              <p>No contacts selected yet.</p>
-            </div>
-          )}
-        </div>
-      </div>
     </div>
   );
 }

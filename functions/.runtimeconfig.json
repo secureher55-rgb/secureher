@@ -1,0 +1,7 @@
+{
+  "twilio": {
+    "from": "+1xxxxxxxxxx",
+    "token": "your_auth_token",
+    "sid": "ACxxxxxxxx"
+  }
+}

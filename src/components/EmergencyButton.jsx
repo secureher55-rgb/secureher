@@ -1,18 +1,19 @@
 import React, { useState, useRef } from "react";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { getAuth } from "firebase/auth";
+import { sendSOS } from "../utils/sendSOS"; // 🔹 Import SOS SMS sender
 import "../styles/EmergencyButton.scss";
 
 const EmergencyButton = ({ onEmergencyCall }) => {
   const [isCalling, setIsCalling] = useState(false);
-  const [statusText, setStatusText] = useState("🚨 Emergency Alert");
+  const [statusText, setStatusText] = useState("Emergency Alert 🚨");
   const [recordingTime, setRecordingTime] = useState(0);
 
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const timerRef = useRef(null);
 
-  // Helper functions for status management
+  // 🔹 Status helpers
   const getStatusType = (statusText) => {
     if (statusText.includes("Recording")) return "recording";
     if (statusText.includes("Uploading")) return "uploading";
@@ -45,7 +46,7 @@ const EmergencyButton = ({ onEmergencyCall }) => {
 
     let stream;
     try {
-      // 🎤 Request microphone access
+      // 🎤 Request mic access
       stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const recorder = new MediaRecorder(stream);
       audioChunksRef.current = [];
@@ -63,7 +64,7 @@ const EmergencyButton = ({ onEmergencyCall }) => {
           let audioUrl = null;
           let location = null;
 
-          // ✅ Upload audio if available
+          // ✅ Upload audio
           if (audioChunksRef.current.length > 0) {
             const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
             audioUrl = await uploadToFirebase(audioBlob);
@@ -72,7 +73,7 @@ const EmergencyButton = ({ onEmergencyCall }) => {
           // 🌍 Get location
           location = await getCurrentLocation();
 
-          // ✅ Pass to parent handler (e.g., Firestore, SMS, Push)
+          // ✅ Notify parent (if needed)
           if (onEmergencyCall) {
             onEmergencyCall({
               audioUrl: audioUrl || null,
@@ -81,7 +82,24 @@ const EmergencyButton = ({ onEmergencyCall }) => {
             });
           }
 
-          setStatusText("✅ Alert Sent!");
+          // 📩 Send SOS via Firebase Function
+          const phone = "+91XXXXXXXXXX"; // 🔹 Replace with trusted contact
+          const message = `🚨 Emergency Alert!\n
+            Location: ${
+              location
+                ? `https://maps.google.com/?q=${location.lat},${location.lng}`
+                : "Not Available"
+            }\n
+            Audio: ${audioUrl || "Not Available"}\n
+            Time: ${new Date().toLocaleString()}`;
+
+          const response = await sendSOS(phone, message);
+
+          if (response.success) {
+            setStatusText("✅ Alert Sent!");
+          } else {
+            setStatusText("❌ Failed to Send");
+          }
         } catch (err) {
           console.error("Error sending alert:", err);
           setStatusText("❌ Failed to Send");
@@ -93,7 +111,7 @@ const EmergencyButton = ({ onEmergencyCall }) => {
       mediaRecorderRef.current = recorder;
       recorder.start();
 
-      // Auto-stop after 10s
+      // ⏱ Auto-stop after 10s
       let elapsed = 0;
       timerRef.current = setInterval(() => {
         elapsed++;
@@ -110,7 +128,7 @@ const EmergencyButton = ({ onEmergencyCall }) => {
     }
   };
 
-  // 🔹 Upload audio to Firebase
+  // 🔹 Upload audio
   const uploadToFirebase = async (blob) => {
     try {
       const auth = getAuth();
@@ -132,7 +150,7 @@ const EmergencyButton = ({ onEmergencyCall }) => {
     }
   };
 
-  // 🔹 Get Current Location
+  // 🔹 Get location
   const getCurrentLocation = () =>
     new Promise((resolve) => {
       if (!navigator.geolocation) {
@@ -158,7 +176,7 @@ const EmergencyButton = ({ onEmergencyCall }) => {
     if (timerRef.current) clearInterval(timerRef.current);
     if (stream) stream.getTracks().forEach((t) => t.stop());
     setIsCalling(false);
-    setStatusText("🚨 Emergency Alert");
+    setStatusText("Emergency Alert 🚨");
     setRecordingTime(0);
   };
 
@@ -176,7 +194,7 @@ const EmergencyButton = ({ onEmergencyCall }) => {
           ? `Recording (${10 - recordingTime}s)`
           : statusText}
       </button>
-      
+
       {isCalling && (
         <div className={`status-indicator ${getStatusType(statusText)}`}>
           {getStatusMessage(statusText)}

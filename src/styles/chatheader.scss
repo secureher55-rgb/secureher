@@ -1,0 +1,44 @@
+.chat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 1rem;
+    background: #111;
+    border-bottom: 1px solid #222;
+    color: #fff;
+  
+    h2 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0;
+    }
+  
+    .back-btn {
+      background: none;
+      border: none;
+      color: #4a90e2;
+      font-size: 18px;
+      cursor: pointer;
+      margin-right: 10px;
+  
+      &:hover {
+        color: #357ab7;
+      }
+    }
+  
+    .actions {
+      button {
+        background: none;
+        border: none;
+        color: #bbb;
+        font-size: 18px;
+        cursor: pointer;
+        padding: 4px;
+  
+        &:hover {
+          color: #fff;
+        }
+      }
+    }
+  }
+  

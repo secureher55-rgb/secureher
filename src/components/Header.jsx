@@ -8,21 +8,18 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [scrolled, setScrolled] = useState(false);
 
+  // 🔹 Handle auth + scroll
   useEffect(() => {
-    // Listen to user state changes
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
     });
 
-    // Handle scroll effect
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 10);
-    };
-
+    const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
 
     return () => {
@@ -37,7 +34,7 @@ export default function Header() {
     <div className="main-header">
       <header className={`mobile-header ${scrolled ? "scrolled" : ""}`}>
         <div className="header-content">
-          {/* Logo + Title */}
+          {/* 🔹 Logo + Title */}
           <button
             className="logo-container"
             onClick={() => navigate("/")}
@@ -49,56 +46,61 @@ export default function Header() {
             <h1 className="app-title">SecureHer</h1>
           </button>
 
-          {/* Desktop Navigation */}
+          {/* 🔹 Desktop Navigation */}
           <nav className="desktop-nav">
-            {/* ✅ Only show these when logged in */}
-            {user && (
+            {user ? (
               <>
                 <button
-                  className={`nav-item ${
-                    isActiveRoute("/profile") ? "active" : ""
-                  }`}
-                  onClick={() => navigate("/profile")}
+                  className={`nav-item ${isActiveRoute("/about") ? "active" : ""}`}
+                  onClick={() => navigate("/about")}
                 >
-                  <i className="fas fa-user"></i>
-                  <span>Profile</span>
+                  <i className="fas fa-address-card"></i>
+                  <span>About</span>
                 </button>
 
                 <button
-                  className={`nav-item ${
-                    isActiveRoute("/contactselector") ? "active" : ""
-                  }`}
+                  className={`nav-item ${isActiveRoute("/contactselector") ? "active" : ""}`}
                   onClick={() => navigate("/contactselector")}
                 >
                   <i className="fas fa-address-book"></i>
                   <span>Contacts</span>
                 </button>
 
+                {/* 🔹 Chat Link */}
                 <button
-                  className={`nav-item ${
-                    isActiveRoute("/safety-tips") ? "active" : ""
-                  }`}
+                  className={`nav-item ${isActiveRoute("/chat") ? "active" : ""}`}
+                  onClick={() => navigate("/chat")}
+                >
+                  <i className="fas fa-comments"></i>
+                  <span>Chat</span>
+                </button>
+
+                <button
+                  className={`nav-item ${isActiveRoute("/safety-tips") ? "active" : ""}`}
                   onClick={() => navigate("/safety-tips")}
                 >
                   <i className="fas fa-lightbulb"></i>
                   <span>Safety Tips</span>
                 </button>
               </>
-            )}
-
-            {/* ✅ Show Login only when logged out */}
-            {!user && (
-              <button
-                className="nav-item login-btn"
-                onClick={() => navigate("/login")}
-              >
+            ) : (
+              <button className="nav-item login-btn" onClick={() => navigate("/login")}>
                 <i className="fas fa-user"></i>
                 <span>Login</span>
               </button>
             )}
+
+            {/* Always show Profile */}
+            <button
+              className={`nav-item ${isActiveRoute("/profile") ? "active" : ""}`}
+              onClick={() => navigate("/profile")}
+            >
+              <i className="fas fa-user"></i>
+              <span>Profile</span>
+            </button>
           </nav>
 
-          {/* Mobile menu toggle button */}
+          {/* 🔹 Mobile Menu Toggle */}
           <button
             className="menu-toggle"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -112,15 +114,12 @@ export default function Header() {
           </button>
         </div>
 
-        {/* Mobile Dropdown Menu */}
+        {/* 🔹 Mobile Navigation */}
         <nav className={`mobile-nav ${isMenuOpen ? "open" : ""}`}>
-          {/* ✅ Only show these when logged in */}
-          {user && (
+          {user ? (
             <>
               <button
-                className={`nav-item ${
-                  isActiveRoute("/profile") ? "active" : ""
-                }`}
+                className={`nav-item ${isActiveRoute("/profile") ? "active" : ""}`}
                 onClick={() => {
                   navigate("/profile");
                   setIsMenuOpen(false);
@@ -131,9 +130,7 @@ export default function Header() {
               </button>
 
               <button
-                className={`nav-item ${
-                  isActiveRoute("/contactselector") ? "active" : ""
-                }`}
+                className={`nav-item ${isActiveRoute("/contactselector") ? "active" : ""}`}
                 onClick={() => {
                   navigate("/contactselector");
                   setIsMenuOpen(false);
@@ -143,10 +140,20 @@ export default function Header() {
                 <span>Manage Contacts</span>
               </button>
 
+              {/* 🔹 Chat Link (Mobile) */}
               <button
-                className={`nav-item ${
-                  isActiveRoute("/safety-tips") ? "active" : ""
-                }`}
+                className={`nav-item ${isActiveRoute("/chat") ? "active" : ""}`}
+                onClick={() => {
+                  navigate("/chat");
+                  setIsMenuOpen(false);
+                }}
+              >
+                <i className="fas fa-comments"></i>
+                <span>Chat</span>
+              </button>
+
+              <button
+                className={`nav-item ${isActiveRoute("/safety-tips") ? "active" : ""}`}
                 onClick={() => {
                   navigate("/safety-tips");
                   setIsMenuOpen(false);
@@ -156,10 +163,7 @@ export default function Header() {
                 <span>Safety Tips</span>
               </button>
             </>
-          )}
-
-          {/* ✅ Show Login only when logged out */}
-          {!user && (
+          ) : (
             <button
               className="nav-item login-btn"
               onClick={() => {

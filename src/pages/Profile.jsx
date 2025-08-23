@@ -27,6 +27,7 @@ const Profile = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    mobile: "",
     emergencyContact: "",
   });
   const [newPhoto, setNewPhoto] = useState(null);
@@ -61,6 +62,7 @@ const Profile = () => {
             setFormData({
               name: data.name || "",
               email: data.email || currentUser.email,
+              mobile: data.mobile || "",
               emergencyContact: data.emergencyContact || "",
             });
           } else {
@@ -131,6 +133,7 @@ const Profile = () => {
       await updateDoc(docRef, {
         name: formData.name,
         email: formData.email,
+        mobile: formData.mobile,
         emergencyContact: formData.emergencyContact,
         photoURL: photoURL,
       });
@@ -140,6 +143,7 @@ const Profile = () => {
         ...profile,
         name: formData.name,
         email: formData.email,
+        mobile: formData.mobile,
         emergencyContact: formData.emergencyContact,
         photoURL: photoURL,
       });
@@ -217,6 +221,7 @@ const Profile = () => {
           <div className="profile-titles">
             <h2>{profile?.name || "User"}</h2>
             <p>{profile?.email || user.email}</p>
+            {profile?.mobile && <p className="profile-mobile">{profile.mobile}</p>}
           </div>
         </div>
 
@@ -248,7 +253,17 @@ const Profile = () => {
               
               <div className="info-item">
                 <span className="info-icon">
-                  <i className="fas fa-phone-emergency"></i>
+                  <i className="fas fa-mobile-alt"></i>
+                </span>
+                <div className="info-content">
+                  <span className="info-label">Mobile Number</span>
+                  <span className="info-value">{profile?.mobile || "Not set"}</span>
+                </div>
+              </div>
+              
+              <div className="info-item">
+                <span className="info-icon">
+                <i class="fas fa-exclamation-triangle"></i> 
                 </span>
                 <div className="info-content">
                   <span className="info-label">Emergency Contact</span>
@@ -299,7 +314,20 @@ const Profile = () => {
             
             <div className="form-group">
               <label>
-                <i className="fas fa-phone"></i> Emergency Contact
+                <i className="fas fa-mobile-alt"></i> Mobile Number
+              </label>
+              <input
+                type="text"
+                name="mobile"
+                value={formData.mobile}
+                onChange={handleChange}
+                placeholder="Enter your mobile number"
+              />
+            </div>
+            
+            <div className="form-group">
+              <label>
+              <i class="fas fa-exclamation-triangle"></i>  Emergency Contact
               </label>
               <input
                 type="text"

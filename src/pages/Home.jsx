@@ -14,13 +14,11 @@ import {
 } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import ContactSelector from "../components/ContactSelector";
-import EmergencyButton from "../components/EmergencyButton"; // ✅ Emergency button
+import EmergencyButton from "../components/EmergencyButton";
+import { sendSOS } from "../utils/sendSOS";
 import "../styles/home.scss";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { app } from "../firebase/config";
-
-const db = getFirestore(app);
-const auth = getAuth(app);
 
 export default function Home() {
   const navigate = useNavigate();
@@ -31,21 +29,57 @@ export default function Home() {
   const [isEmergencyMode, setIsEmergencyMode] = useState(false);
   const [emergencyStatus, setEmergencyStatus] = useState("idle");
 
-  // 🔹 Auth + User Profile
+  const db = getFirestore(app);
+  const auth = getAuth(app);
+
+  // ✅ Utility: remove undefined/null values before saving to Firestore
+  const cleanData = (obj) => {
+    const cleaned = {};
+    for (const [key, value] of Object.entries(obj)) {
+      // Skip undefined and null values
+      if (value === undefined || value === null) continue;
+      
+      // Handle nested objects
+      if (typeof value === 'object' && !(value instanceof Timestamp) && !Array.isArray(value)) {
+        const cleanedNested = cleanData(value);
+        // Only add if the nested object has properties
+        if (Object.keys(cleanedNested).length > 0) {
+          cleaned[key] = cleanedNested;
+        }
+      } 
+      // Handle arrays
+      else if (Array.isArray(value)) {
+        // Filter out undefined/null values from arrays
+        const filteredArray = value.filter(item => item !== undefined && item !== null);
+        if (filteredArray.length > 0) {
+          cleaned[key] = filteredArray;
+        }
+      }
+      // Handle primitive values
+      else {
+        cleaned[key] = value;
+      }
+    }
+    return cleaned;
+  };
+
+  // 🔹 Auth + Load User Data
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        setUser(user);
-        await loadUserProfile(user.uid);
-        await loadUserContacts(user.uid);
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+        await loadUserProfile(currentUser.uid);
+        await loadUserContacts(currentUser.uid);
       } else {
         setUser(null);
         setUserName("");
+        setContacts([]);
       }
     });
     return () => unsubscribe();
   }, []);
 
+  // 🔹 Fetch User Profile
   const loadUserProfile = async (userId) => {
     try {
       const userDoc = await getDoc(doc(db, "users", userId));
@@ -57,6 +91,7 @@ export default function Home() {
     }
   };
 
+  // 🔹 Fetch Contacts
   const loadUserContacts = async (userId) => {
     try {
       const contactsRef = collection(db, "users", userId, "contacts");
@@ -71,14 +106,14 @@ export default function Home() {
     }
   };
 
-  // 🔹 Save Emergency Alert (called from EmergencyButton)
+  // 🔹 Emergency SOS Handler
   const handleEmergencyCall = async (audioUrl, location) => {
     if (!user) {
-      alert("Please log in to use emergency features.");
+      alert("⚠️ Please log in to use emergency features.");
       return;
     }
     if (selectedContacts.length === 0) {
-      alert("Please select at least one emergency contact first");
+      alert("⚠️ Please select at least one emergency contact first.");
       return;
     }
 
@@ -87,26 +122,61 @@ export default function Home() {
 
     try {
       // ✅ Build alert data safely
-      const alertData = {
+      let alertData = {
         userId: user.uid,
         timestamp: Timestamp.now(),
-        contacts: selectedContacts,
+        contacts: selectedContacts.map((c) => c.id).filter(id => id), // Filter out undefined IDs
         status: "sent",
       };
 
-      if (audioUrl) alertData.audioUrl = audioUrl;
-      if (location && location.lat && location.lng) {
+      // Only add audioUrl if it exists
+      if (audioUrl) {
+        alertData.audioUrl = audioUrl;
+      }
+
+      // Only add location if it exists and has valid coordinates
+      if (location && typeof location.lat === 'number' && typeof location.lng === 'number') {
         alertData.location = {
           lat: location.lat,
-          lng: location.lng,
+          lng: location.lng
         };
       }
 
-      const alertRef = await addDoc(collection(db, "emergencyAlerts"), alertData);
+      // Remove null/undefined fields
+      alertData = cleanData(alertData);
+
+      console.log("Saving to Firestore:", alertData);
+
+      // Save to Firestore
+      const alertRef = await addDoc(
+        collection(db, "emergencyAlerts"),
+        alertData
+      );
 
       await updateDoc(doc(db, "users", user.uid), {
         emergencyAlerts: arrayUnion(alertRef.id),
       });
+
+      // ✅ Send SMS to each contact
+      for (const contact of selectedContacts) {
+        const phone = contact.phone;
+        if (!phone) continue; // skip if no phone number
+
+        const message = `🚨 Emergency Alert from ${
+          userName || "a SecureHer user"
+        }!\n📍 Location: ${
+          location?.lat && location?.lng
+            ? `https://maps.google.com/?q=${location.lat},${location.lng}`
+            : "Location unavailable"
+        }\n🎤 Audio: ${
+          audioUrl || "No recording available"
+        }\n⏰ Time: ${new Date().toLocaleString()}`;
+
+        const res = await sendSOS(phone, message);
+        if (!res.success) {
+          console.error(`❌ Failed to send SOS to ${phone}:`, res.error);
+        }
+      }
 
       setEmergencyStatus("sent");
 
@@ -124,7 +194,7 @@ export default function Home() {
     <div className="main-container">
       <div className="home-container">
         <main className="mobile-main glassy-card">
-          {/* 🔹 Welcome */}
+          {/* 🔹 Welcome Section */}
           <section className="welcome-section">
             <h1 className="app-title">
               Secure<span>Her</span>
@@ -137,121 +207,86 @@ export default function Home() {
             )}
           </section>
 
-          {/* 🔹 Main */}
+          {/* 🔹 Main Content */}
           <section className="main-content">
             {!isEmergencyMode ? (
-              <>
-                {user ? (
-                  <>
-                    <p className="instruction">
-                      Select contacts & stay protected
-                    </p>
-                    <ContactSelector
-                      contacts={contacts}
-                      selectedContacts={selectedContacts}
-                      setSelectedContacts={setSelectedContacts}
-                    />
+              user ? (
+                <>
+                  <p className="instruction">
+                    Select contacts & stay protected
+                  </p>
+                  <ContactSelector
+                    contacts={contacts}
+                    selectedContacts={selectedContacts}
+                    setSelectedContacts={setSelectedContacts}
+                  />
 
-                    {/* 🚨 Emergency Button */}
-                    <EmergencyButton onEmergencyCall={handleEmergencyCall} />
+                  {/* 🚨 Emergency Button */}
+                  <EmergencyButton onEmergencyCall={handleEmergencyCall} />
 
-                    {/* ℹ️ Quick Access */}
-                    <div className="more-options">
-                      <h3>Quick Access</h3>
-                      <div className="options-list">
-                        <button
-                          className="option-btn emergency-call"
-                          onClick={() => (window.location.href = "tel:112")}
-                        >
-                          <i className="fas fa-phone"></i> Emergency Call (112)
-                        </button>
+                  {/* ℹ️ Quick Access */}
+                  <div className="more-options">
+                    <h3>Quick Access</h3>
+                    <div className="options-list">
+                      <button
+                        className="option-btn emergency-call"
+                        onClick={() => (window.location.href = "tel:112")}
+                      >
+                        <i className="fas fa-phone"></i> Emergency Call (112)
+                      </button>
 
-                        <button
-                          className="option-btn"
-                          onClick={() => navigate("/info")}
-                        >
-                          <i className="fas fa-info-circle"></i> How It Works
-                        </button>
-                        <button
-                          className="option-btn"
-                          onClick={() => navigate("/safety-tips")}
-                        >
-                          <i className="fas fa-shield-alt"></i> Safety Tips
-                        </button>
-                        <button
-                          className="option-btn"
-                          onClick={() => navigate("/helplines")}
-                        >
-                          <i className="fas fa-phone-alt"></i> Emergency Numbers
-                        </button>
-                        <button
-                          className="option-btn"
-                          onClick={() => navigate("/about")}
-                        >
-                          <i className="fas fa-users"></i> About SecureHer
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* 🟢 Safety Tips Section */}
-                    <div className="safety-tips glassy-card">
-                      <h3>
-                        <i className="fas fa-lightbulb"></i> Safety Tips
-                      </h3>
-                      <ul>
-                        <li>Always share your live location with trusted contacts.</li>
-                        <li>Keep your emergency contacts updated.</li>
-                        <li>Stay in well-lit and public areas when possible.</li>
-                        <li>Trust your instincts – leave unsafe situations quickly.</li>
-                      </ul>
-                    </div>
-
-                    {/* 📖 How It Works */}
-                    <div className="how-it-works glassy-card">
-                      <h3>
-                        <i className="fas fa-info-circle"></i> How SecureHer Works
-                      </h3>
-                      <p>
-                        Tap the Emergency Alert button to notify contacts,
-                        record audio, and share your location instantly.
-                      </p>
-                    </div>
-
-                    {/* 🚨 Emergency Helplines */}
-                    <div className="helplines glassy-card">
-                      <h3>
+                      <button
+                        className="option-btn"
+                        onClick={() => navigate("/info")}
+                      >
+                        <i className="fas fa-info-circle"></i> How It Works
+                      </button>
+                      <button
+                        className="option-btn"
+                        onClick={() => navigate("/safety-tips")}
+                      >
+                        <i className="fas fa-shield-alt"></i> Safety Tips
+                      </button>
+                      <button
+                        className="option-btn"
+                        onClick={() => navigate("/helplines")}
+                      >
                         <i className="fas fa-phone-alt"></i> Emergency Numbers
-                      </h3>
-                      <p>Police: <strong>112</strong></p>
-                      <p>Women Helpline: <strong>1090</strong></p>
-                      <p>Ambulance: <strong>108</strong></p>
-                    </div>
-
-                    {/* 👩 About SecureHer */}
-                    <div className="about-app glassy-card">
-                      <h3>
+                      </button>
+                      <button
+                        className="option-btn"
+                        onClick={() => navigate("/about")}
+                      >
                         <i className="fas fa-users"></i> About SecureHer
-                      </h3>
-                      <p>
-                        SecureHer is a safety-first emergency alert app designed
-                        to empower women by providing instant SOS alerts,
-                        location sharing, and secure audio evidence.
-                      </p>
+                      </button>
                     </div>
-                  </>
-                ) : (
-                  <div className="login-prompt glassy-card">
-                    <i className="fas fa-lock"></i>
-                    <p>Please log in to access emergency features</p>
-                    <button
-                      className="login-btn-prompt"
-                      onClick={() => navigate("/login")}
-                    >
-                      <i className="fas fa-sign-in-alt"></i> Login to Continue
-                    </button>
                   </div>
-                )}
-              </>
+
+                  {/* 🟢 Safety Tips */}
+                  <div className="safety-tips glassy-card">
+                    <h3>
+                      <i className="fas fa-lightbulb"></i> Safety Tips
+                    </h3>
+                    <ul>
+                      <li>Always share your live location with trusted contacts.</li>
+                      <li>Keep your emergency contacts updated.</li>
+                      <li>Stay in well-lit and public areas when possible.</li>
+                      <li>Trust your instincts – leave unsafe situations quickly.</li>
+                    </ul>
+                  </div>
+                </>
+              ) : (
+                <div className="login-prompt glassy-card">
+                  <i className="fas fa-lock"></i>
+                  <p>Please log in to access emergency features</p>
+                  <button
+                    className="login-btn-prompt"
+                    onClick={() => navigate("/login")}
+                  >
+                    <i className="fas fa-sign-in-alt"></i> Login to Continue
+                  </button>
+                </div>
+              )
             ) : (
               <div className="emergency-active">
                 {emergencyStatus === "sending" && (
