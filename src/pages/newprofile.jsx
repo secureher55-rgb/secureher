@@ -47,7 +47,6 @@ const Profile = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setLoading(true);
-      setError("");
       if (currentUser) {
         setUser(currentUser);
 
@@ -67,42 +66,29 @@ const Profile = () => {
 
             setProfile(data);
             setFormData({
-              name: data.name || currentUser.displayName || "",
-              email: data.email || currentUser.email || "",
+              name: data.name || "",
+              email: data.email || currentUser.email,
               mobile: data.mobile || "",
               emergencyContact: data.emergencyContact || "",
             });
           } else {
             // Create initial user doc if not found
             try {
-              const userData = {
+              await setDoc(docRef, {
                 name: currentUser.displayName || "",
-                email: currentUser.email || "",
+                email: currentUser.email,
                 createdAt: serverTimestamp(),
                 photoURL: currentUser.photoURL || "",
-                uid: currentUser.uid
-              };
-              
-              await setDoc(docRef, userData);
-              
-              setProfile({
-                ...userData,
-                createdAt: new Date().toLocaleDateString(),
               });
-              
-              setFormData({
-                name: userData.name,
-                email: userData.email,
-                mobile: "",
-                emergencyContact: "",
+              setProfile({
+                name: currentUser.displayName || "",
+                email: currentUser.email,
+                createdAt: new Date().toLocaleDateString(),
+                photoURL: currentUser.photoURL || "",
               });
             } catch (error) {
               console.error("Error creating user document:", error);
-              if (error.code === "permission-denied") {
-                setError("Permission denied. Please contact support.");
-              } else {
-                setError("Failed to create user profile. Please try again.");
-              }
+              setError("Failed to create user profile. Please try again.");
             }
           }
         } catch (error) {
@@ -149,7 +135,6 @@ const Profile = () => {
   // 🔹 Save profile
   const handleSave = async () => {
     if (!user) return;
-    setError("");
     try {
       let photoURL = user.photoURL;
 
@@ -176,11 +161,13 @@ const Profile = () => {
       // Update Firestore
       const docRef = doc(db, "users", user.uid);
       await updateDoc(docRef, {
-        name: formData.name || "",
-        email: formData.email || user.email,
-        mobile: formData.mobile || "",
-        emergencyContact: formData.emergencyContact || "",
-        photoURL: photoURL || user.photoURL || "",
+        ...(formData.name && { name: formData.name }),
+        ...(formData.email && { email: formData.email }),
+        ...(formData.mobile && { mobile: formData.mobile }),
+        ...(formData.emergencyContact && {
+          emergencyContact: formData.emergencyContact,
+        }),
+        photoURL: photoURL || "",
       });
 
       // Update local state
@@ -190,7 +177,7 @@ const Profile = () => {
         email: formData.email,
         mobile: formData.mobile,
         emergencyContact: formData.emergencyContact,
-        photoURL: photoURL || prev.photoURL,
+        photoURL,
       }));
 
       setSaveStatus("success");
@@ -203,14 +190,11 @@ const Profile = () => {
       console.error("Error updating profile:", error);
       setSaveStatus("error");
       setUploading(false);
+      setTimeout(() => setSaveStatus(""), 3000);
       
       if (error.code === "permission-denied") {
         setError("You don't have permission to update your profile. Please contact support.");
-      } else {
-        setError("Error updating profile. Please try again.");
       }
-      
-      setTimeout(() => setSaveStatus(""), 3000);
     }
   };
 

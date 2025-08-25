@@ -1,0 +1,37 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Allow users to create their own document if it doesn't exist yet
+    match /users/{userId} {
+      // Allow read if user is authenticated and accessing their own data
+      allow read: if request.auth != null && request.auth.uid == userId;
+      
+      // Allow write (create/update) if:
+      // 1. User is authenticated AND
+      // 2. User is creating/updating their own document OR
+      // 3. Document doesn't exist yet (for initial creation)
+      allow write: if request.auth != null && 
+        (request.auth.uid == userId || 
+         !exists(/databases/$(database)/documents/users/$(userId)));
+      
+      // Subcollection: contacts - only the owner can access
+      match /contacts/{contactId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+
+    // Emergency alerts collection
+    match /emergencyAlerts/{alertId} {
+      // Only allow users to create alerts for themselves
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      
+      // Allow read only for the alert owner
+      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+
+      // Allow update/delete only by the alert owner
+      allow update, delete: if request.auth != null && request.auth.uid == resource.data.userId;
+    }
+  }
+}

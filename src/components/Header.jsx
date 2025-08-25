@@ -51,24 +51,19 @@ export default function Header() {
             {user ? (
               <>
                 <button
-                  className={`nav-item ${isActiveRoute("/about") ? "active" : ""}`}
-                  onClick={() => navigate("/about")}
-                >
-                  <i className="fas fa-address-card"></i>
-                  <span>About</span>
-                </button>
-
-                <button
-                  className={`nav-item ${isActiveRoute("/contactselector") ? "active" : ""}`}
+                  className={`nav-item ${
+                    isActiveRoute("/contactselector") ? "active" : ""
+                  }`}
                   onClick={() => navigate("/contactselector")}
                 >
                   <i className="fas fa-address-book"></i>
                   <span>Contacts</span>
                 </button>
 
-                {/* 🔹 Chat Link */}
                 <button
-                  className={`nav-item ${isActiveRoute("/chat") ? "active" : ""}`}
+                  className={`nav-item ${
+                    isActiveRoute("/chat") ? "active" : ""
+                  }`}
                   onClick={() => navigate("/chat")}
                 >
                   <i className="fas fa-comments"></i>
@@ -76,15 +71,30 @@ export default function Header() {
                 </button>
 
                 <button
-                  className={`nav-item ${isActiveRoute("/safety-tips") ? "active" : ""}`}
+                  className={`nav-item ${
+                    isActiveRoute("/safety-tips") ? "active" : ""
+                  }`}
                   onClick={() => navigate("/safety-tips")}
                 >
                   <i className="fas fa-lightbulb"></i>
                   <span>Safety Tips</span>
                 </button>
+
+                <button
+                  className={`nav-item ${
+                    isActiveRoute("/about") ? "active" : ""
+                  }`}
+                  onClick={() => navigate("/about")}
+                >
+                  <i className="fas fa-address-card"></i>
+                  <span>About</span>
+                </button>
               </>
             ) : (
-              <button className="nav-item login-btn" onClick={() => navigate("/login")}>
+              <button
+                className="nav-item login-btn"
+                onClick={() => navigate("/login")}
+              >
                 <i className="fas fa-user"></i>
                 <span>Login</span>
               </button>
@@ -92,7 +102,9 @@ export default function Header() {
 
             {/* Always show Profile */}
             <button
-              className={`nav-item ${isActiveRoute("/profile") ? "active" : ""}`}
+              className={`nav-item ${
+                isActiveRoute("/profile") ? "active" : ""
+              }`}
               onClick={() => navigate("/profile")}
             >
               <i className="fas fa-user"></i>
@@ -119,18 +131,9 @@ export default function Header() {
           {user ? (
             <>
               <button
-                className={`nav-item ${isActiveRoute("/profile") ? "active" : ""}`}
-                onClick={() => {
-                  navigate("/profile");
-                  setIsMenuOpen(false);
-                }}
-              >
-                <i className="fas fa-user"></i>
-                <span>Profile</span>
-              </button>
-
-              <button
-                className={`nav-item ${isActiveRoute("/contactselector") ? "active" : ""}`}
+                className={`nav-item ${
+                  isActiveRoute("/contactselector") ? "active" : ""
+                }`}
                 onClick={() => {
                   navigate("/contactselector");
                   setIsMenuOpen(false);
@@ -140,9 +143,10 @@ export default function Header() {
                 <span>Manage Contacts</span>
               </button>
 
-              {/* 🔹 Chat Link (Mobile) */}
               <button
-                className={`nav-item ${isActiveRoute("/chat") ? "active" : ""}`}
+                className={`nav-item ${
+                  isActiveRoute("/chat") ? "active" : ""
+                }`}
                 onClick={() => {
                   navigate("/chat");
                   setIsMenuOpen(false);
@@ -153,7 +157,9 @@ export default function Header() {
               </button>
 
               <button
-                className={`nav-item ${isActiveRoute("/safety-tips") ? "active" : ""}`}
+                className={`nav-item ${
+                  isActiveRoute("/safety-tips") ? "active" : ""
+                }`}
                 onClick={() => {
                   navigate("/safety-tips");
                   setIsMenuOpen(false);
@@ -161,6 +167,32 @@ export default function Header() {
               >
                 <i className="fas fa-lightbulb"></i>
                 <span>Safety Tips</span>
+              </button>
+
+              <button
+                className={`nav-item ${
+                  isActiveRoute("/about") ? "active" : ""
+                }`}
+                onClick={() => {
+                  navigate("/about");
+                  setIsMenuOpen(false);
+                }}
+              >
+                <i className="fas fa-address-card"></i>
+                <span>About</span>
+              </button>
+
+              <button
+                className={`nav-item ${
+                  isActiveRoute("/profile") ? "active" : ""
+                }`}
+                onClick={() => {
+                  navigate("/profile");
+                  setIsMenuOpen(false);
+                }}
+              >
+                <i className="fas fa-user"></i>
+                <span>Profile</span>
               </button>
             </>
           ) : (

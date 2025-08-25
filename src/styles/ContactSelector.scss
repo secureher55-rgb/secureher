@@ -74,6 +74,9 @@
     i {
       color: #4a90e2;
     }
+    @media (max-width: 765px){
+      font-size: 1.2rem;
+    }
   }
 
   .no-contacts {
@@ -254,6 +257,10 @@
     &:active {
       transform: scale(0.95);
     }
+    @media (max-width: 768px){
+      padding: 0rem;
+      margin-left: 0rem;
+    }
   }
 
   // Add new contact button
@@ -306,7 +313,8 @@
     padding: 1.25rem;
     
     .contact-item {
-      padding: 0.85rem;
+      padding: 0.85rem !important;
+      width: 170px;
     }
     
     .contact-avatar {

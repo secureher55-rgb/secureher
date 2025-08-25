@@ -1,0 +1,178 @@
+[debug] [2025-08-25T07:15:44.612Z] ----------------------------------------------------------------------
+[debug] [2025-08-25T07:15:44.614Z] Command:       /opt/homebrew/Cellar/node/24.6.0/bin/node /opt/homebrew/bin/firebase deploy
+[debug] [2025-08-25T07:15:44.614Z] CLI Version:   14.14.0
+[debug] [2025-08-25T07:15:44.614Z] Platform:      darwin
+[debug] [2025-08-25T07:15:44.614Z] Node Version:  v24.6.0
+[debug] [2025-08-25T07:15:44.614Z] Time:          Mon Aug 25 2025 12:45:44 GMT+0530 (India Standard Time)
+[debug] [2025-08-25T07:15:44.614Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-08-25T07:15:44.710Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-08-25T07:15:44.710Z] > authorizing via signed-in user (secureher55@gmail.com)
+[debug] [2025-08-25T07:15:44.711Z] [iam] checking project her-13a74 for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2025-08-25T07:15:44.711Z] Checked if tokens are valid: false, expires at: 1756106705774
+[debug] [2025-08-25T07:15:44.711Z] Checked if tokens are valid: false, expires at: 1756106705774
+[debug] [2025-08-25T07:15:44.711Z] > refreshing access token with scopes: []
+[debug] [2025-08-25T07:15:44.712Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-08-25T07:15:44.712Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-08-25T07:15:45.117Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-08-25T07:15:45.117Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-08-25T07:15:45.129Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/her-13a74:testIamPermissions [none]
+[debug] [2025-08-25T07:15:45.129Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/her-13a74:testIamPermissions x-goog-quota-user=projects/her-13a74
+[debug] [2025-08-25T07:15:45.129Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/her-13a74:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2025-08-25T07:15:47.126Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/her-13a74:testIamPermissions 200
+[debug] [2025-08-25T07:15:47.127Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/her-13a74:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2025-08-25T07:15:47.128Z] Checked if tokens are valid: true, expires at: 1756109744117
+[debug] [2025-08-25T07:15:47.128Z] Checked if tokens are valid: true, expires at: 1756109744117
+[debug] [2025-08-25T07:15:47.128Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/her-13a74/serviceAccounts/her-13a74@appspot.gserviceaccount.com:testIamPermissions [none]
+[debug] [2025-08-25T07:15:47.128Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/her-13a74/serviceAccounts/her-13a74@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2025-08-25T07:15:49.304Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/her-13a74/serviceAccounts/her-13a74@appspot.gserviceaccount.com:testIamPermissions 200
+[debug] [2025-08-25T07:15:49.305Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/her-13a74/serviceAccounts/her-13a74@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2025-08-25T07:15:49.306Z] Checked if tokens are valid: true, expires at: 1756109744117
+[debug] [2025-08-25T07:15:49.306Z] Checked if tokens are valid: true, expires at: 1756109744117
+[debug] [2025-08-25T07:15:49.307Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/her-13a74 [none]
+[debug] [2025-08-25T07:15:50.204Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/her-13a74 200
+[debug] [2025-08-25T07:15:50.204Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/her-13a74 {"projectId":"her-13a74","projectNumber":"356704544247","displayName":"secureher","name":"projects/her-13a74","resources":{"hostingSite":"her-13a74"},"state":"ACTIVE","etag":"1_0f431c6f-b944-4b23-b83f-8e94f6d28fb7"}
+[info] 
+[info] === Deploying to 'her-13a74'...
+[info] 
+[info] i  deploying firestore, functions, hosting 
+[info] Running command: npm --prefix "$RESOURCE_DIR" run lint
+[info] ✔  functions: Finished running predeploy script. 
+[info] i  firestore: reading indexes from firestore.indexes.json... 
+[info] i  cloud.firestore: checking firestore.rules for compilation errors... 
+[debug] [2025-08-25T07:15:51.873Z] Checked if tokens are valid: true, expires at: 1756109744117
+[debug] [2025-08-25T07:15:51.873Z] Checked if tokens are valid: true, expires at: 1756109744117
+[debug] [2025-08-25T07:15:51.873Z] >>> [apiv2][query] POST https://firebaserules.googleapis.com/v1/projects/her-13a74:test [none]
+[debug] [2025-08-25T07:15:51.873Z] >>> [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/her-13a74:test [omitted]
+[debug] [2025-08-25T07:15:54.392Z] <<< [apiv2][status] POST https://firebaserules.googleapis.com/v1/projects/her-13a74:test 200
+[debug] [2025-08-25T07:15:54.392Z] <<< [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/her-13a74:test {}
+[info] ✔  cloud.firestore: rules file firestore.rules compiled successfully 
+[debug] [2025-08-25T07:15:54.394Z] Checked if tokens are valid: true, expires at: 1756109744117
+[debug] [2025-08-25T07:15:54.395Z] Checked if tokens are valid: true, expires at: 1756109744117
+[debug] [2025-08-25T07:15:54.395Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/her-13a74 [none]
+[debug] [2025-08-25T07:15:56.348Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/her-13a74 200
+[debug] [2025-08-25T07:15:56.348Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/her-13a74 {"projectNumber":"356704544247","projectId":"her-13a74","lifecycleState":"ACTIVE","name":"secureher","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2025-08-18T12:43:59.488913Z"}
+[info] i  functions: preparing codebase default for deployment 
+[info] i  functions: ensuring required API cloudfunctions.googleapis.com is enabled... 
+[info] i  functions: ensuring required API cloudbuild.googleapis.com is enabled... 
+[info] i  artifactregistry: ensuring required API artifactregistry.googleapis.com is enabled... 
+[debug] [2025-08-25T07:15:56.350Z] Checked if tokens are valid: true, expires at: 1756109744117
+[debug] [2025-08-25T07:15:56.350Z] Checked if tokens are valid: true, expires at: 1756109744117
+[debug] [2025-08-25T07:15:56.351Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/her-13a74/adminSdkConfig [none]
+[debug] [2025-08-25T07:15:57.604Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/her-13a74/adminSdkConfig 200
+[debug] [2025-08-25T07:15:57.604Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/her-13a74/adminSdkConfig {"projectId":"her-13a74","storageBucket":"her-13a74.firebasestorage.app"}
+[debug] [2025-08-25T07:15:57.605Z] Checked if tokens are valid: true, expires at: 1756109744117
+[debug] [2025-08-25T07:15:57.605Z] Checked if tokens are valid: true, expires at: 1756109744117
+[debug] [2025-08-25T07:15:57.605Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/her-13a74/configs [none]
+[debug] [2025-08-25T07:15:58.594Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/her-13a74/configs 200
+[debug] [2025-08-25T07:15:58.595Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/her-13a74/configs {"configs":[{"name":"projects/her-13a74/configs/twilio"}]}
+[debug] [2025-08-25T07:15:58.595Z] Checked if tokens are valid: true, expires at: 1756109744117
+[debug] [2025-08-25T07:15:58.595Z] Checked if tokens are valid: true, expires at: 1756109744117
+[debug] [2025-08-25T07:15:58.595Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/her-13a74/configs/twilio/variables [none]
+[debug] [2025-08-25T07:15:59.010Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/her-13a74/configs/twilio/variables 200
+[debug] [2025-08-25T07:15:59.011Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/her-13a74/configs/twilio/variables {"variables":[{"name":"projects/her-13a74/configs/twilio/variables/from","updateTime":"2025-08-23T22:14:49.157657349Z"},{"name":"projects/her-13a74/configs/twilio/variables/sid","updateTime":"2025-08-23T22:14:49.189856331Z"},{"name":"projects/her-13a74/configs/twilio/variables/token","updateTime":"2025-08-23T22:14:49.150507352Z"}]}
+[debug] [2025-08-25T07:15:59.011Z] Checked if tokens are valid: true, expires at: 1756109744117
+[debug] [2025-08-25T07:15:59.011Z] Checked if tokens are valid: true, expires at: 1756109744117
+[debug] [2025-08-25T07:15:59.011Z] Checked if tokens are valid: true, expires at: 1756109744117
+[debug] [2025-08-25T07:15:59.011Z] Checked if tokens are valid: true, expires at: 1756109744117
+[debug] [2025-08-25T07:15:59.012Z] Checked if tokens are valid: true, expires at: 1756109744117
+[debug] [2025-08-25T07:15:59.012Z] Checked if tokens are valid: true, expires at: 1756109744117
+[debug] [2025-08-25T07:15:59.012Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/her-13a74/configs/twilio/variables/from [none]
+[debug] [2025-08-25T07:15:59.013Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/her-13a74/configs/twilio/variables/sid [none]
+[debug] [2025-08-25T07:15:59.015Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/her-13a74/configs/twilio/variables/token [none]
+[debug] [2025-08-25T07:15:59.453Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/her-13a74/configs/twilio/variables/from 200
+[debug] [2025-08-25T07:15:59.454Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/her-13a74/configs/twilio/variables/from {"name":"projects/her-13a74/configs/twilio/variables/from","updateTime":"2025-08-23T22:14:49.157657349Z","text":"+1 774 485 5603"}
+[debug] [2025-08-25T07:16:01.251Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/her-13a74/configs/twilio/variables/token 200
+[debug] [2025-08-25T07:16:01.252Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/her-13a74/configs/twilio/variables/token {"name":"projects/her-13a74/configs/twilio/variables/token","updateTime":"2025-08-23T22:14:49.150507352Z","text":"426f64229b2e11c017811ac09c8e762f"}
+[debug] [2025-08-25T07:16:01.876Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/her-13a74/configs/twilio/variables/sid 200
+[debug] [2025-08-25T07:16:01.876Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/her-13a74/configs/twilio/variables/sid {"name":"projects/her-13a74/configs/twilio/variables/sid","updateTime":"2025-08-23T22:14:49.189856331Z","text":"ACb71623335b555e387f22fcfe39ac12ca"}
+[debug] [2025-08-25T07:16:01.878Z] Validating nodejs source
+[debug] [2025-08-25T07:16:02.711Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "lint": "eslint . --fix",
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "20"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "dotenv": "^17.2.1",
+    "firebase-admin": "^13.4.0",
+    "firebase-functions": "^6.4.0",
+    "twilio": "^4.23.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.15.0",
+    "eslint-config-google": "^0.14.0",
+    "firebase-functions-test": "^3.4.0"
+  },
+  "private": true
+}
+[debug] [2025-08-25T07:16:02.712Z] Building nodejs source
+[info] i  functions: Loading and analyzing source code for codebase default to determine what to deploy 
+[debug] [2025-08-25T07:16:02.713Z] Could not find functions.yaml. Must use http discovery
+[debug] [2025-08-25T07:16:02.725Z] Found firebase-functions binary at '/Users/omnarayanshastri/Desktop/secureher2/secureher/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8430
+
+[error] {"severity":"ERROR","message":"Error: ⚠️ Missing Twilio credentials. SMS will fail.\n    at entryFromArgs (/Users/omnarayanshastri/Desktop/secureher2/secureher/functions/node_modules/firebase-functions/lib/logger/index.js:134:19)\n    at Object.error (/Users/omnarayanshastri/Desktop/secureher2/secureher/functions/node_modules/firebase-functions/lib/logger/index.js:121:11)\n    at Object.<anonymous> (/Users/omnarayanshastri/Desktop/secureher2/secureher/functions/index.js:24:10)\n    at Module._compile (node:internal/modules/cjs/loader:1738:14)\n    at Object..js (node:internal/modules/cjs/loader:1871:10)\n    at Module.load (node:internal/modules/cjs/loader:1470:32)\n    at Module._load (node:internal/modules/cjs/loader:1290:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:238:24)\n    at Module.require (node:internal/modules/cjs/loader:1493:12)"}
+
+[debug] [2025-08-25T07:16:03.128Z] Got response from /__/functions.yaml {"endpoints":{"health":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":10,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"httpsTrigger":{},"entryPoint":"health"},"sendSOS":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":10,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"callableTrigger":{},"entryPoint":"sendSOS"},"findUserByMobile":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":10,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"callableTrigger":{},"entryPoint":"findUserByMobile"}},"specVersion":"v1alpha1","requiredAPIs":[],"extensions":{}}
+[info] i  extensions: ensuring required API firebaseextensions.googleapis.com is enabled... 
+[debug] [2025-08-25T07:16:07.144Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-08-25T07:16:07.144Z] > authorizing via signed-in user (secureher55@gmail.com)
+[debug] [2025-08-25T07:16:07.144Z] [iam] checking project her-13a74 for permissions ["firebase.projects.get","firebaseextensions.instances.list"]
+[debug] [2025-08-25T07:16:07.144Z] Checked if tokens are valid: true, expires at: 1756109744117
+[debug] [2025-08-25T07:16:07.144Z] Checked if tokens are valid: true, expires at: 1756109744117
+[debug] [2025-08-25T07:16:07.144Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/her-13a74:testIamPermissions [none]
+[debug] [2025-08-25T07:16:07.144Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/her-13a74:testIamPermissions x-goog-quota-user=projects/her-13a74
+[debug] [2025-08-25T07:16:07.144Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/her-13a74:testIamPermissions {"permissions":["firebase.projects.get","firebaseextensions.instances.list"]}
+[debug] [2025-08-25T07:16:09.040Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/her-13a74:testIamPermissions 200
+[debug] [2025-08-25T07:16:09.040Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/her-13a74:testIamPermissions {"permissions":["firebase.projects.get","firebaseextensions.instances.list"]}
+[debug] [2025-08-25T07:16:09.041Z] Checked if tokens are valid: true, expires at: 1756109744117
+[debug] [2025-08-25T07:16:09.041Z] Checked if tokens are valid: true, expires at: 1756109744117
+[debug] [2025-08-25T07:16:09.041Z] >>> [apiv2][query] GET https://firebaseextensions.googleapis.com/v1beta/projects/her-13a74/instances pageSize=100&pageToken=
+[debug] [2025-08-25T07:16:11.230Z] <<< [apiv2][status] GET https://firebaseextensions.googleapis.com/v1beta/projects/her-13a74/instances 200
+[debug] [2025-08-25T07:16:11.231Z] <<< [apiv2][body] GET https://firebaseextensions.googleapis.com/v1beta/projects/her-13a74/instances {}
+[info] i  functions: Loaded environment variables from .env. 
+[info] i  functions: preparing functions directory for uploading... 
+[info] i  functions: packaged /Users/omnarayanshastri/Desktop/secureher2/secureher/functions (77.99 KB) for uploading 
+[debug] [2025-08-25T07:16:11.273Z] Checked if tokens are valid: true, expires at: 1756109744117
+[debug] [2025-08-25T07:16:11.273Z] Checked if tokens are valid: true, expires at: 1756109744117
+[debug] [2025-08-25T07:16:11.273Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v1/projects/her-13a74/locations/-/functions [none]
+[debug] [2025-08-25T07:16:12.350Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v1/projects/her-13a74/locations/-/functions 200
+[debug] [2025-08-25T07:16:12.350Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v1/projects/her-13a74/locations/-/functions {}
+[debug] [2025-08-25T07:16:12.351Z] Checked if tokens are valid: true, expires at: 1756109744117
+[debug] [2025-08-25T07:16:12.351Z] Checked if tokens are valid: true, expires at: 1756109744117
+[debug] [2025-08-25T07:16:12.351Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v2/projects/her-13a74/locations/-/functions filter=environment%3D%22GEN_2%22
+[debug] [2025-08-25T07:16:14.131Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v2/projects/her-13a74/locations/-/functions 200
+[debug] [2025-08-25T07:16:14.131Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v2/projects/her-13a74/locations/-/functions {"functions":[{"name":"projects/her-13a74/locations/us-central1/functions/sendSOS","buildConfig":{"build":"projects/356704544247/locations/us-central1/builds/dddba4dd-fedc-49b0-a428-d117cc0846a1","runtime":"nodejs20","entryPoint":"sendSOS","source":{"storageSource":{"bucket":"gcf-v2-sources-356704544247-us-central1","object":"sendSOS/function-source.zip","generation":"1756103207654909"}},"environmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""},"dockerRepository":"projects/her-13a74/locations/us-central1/repositories/gcf-artifacts","sourceProvenance":{"resolvedStorageSource":{"bucket":"gcf-v2-sources-356704544247-us-central1","object":"sendSOS/function-source.zip","generation":"1756103207654909"}},"dockerRegistry":"ARTIFACT_REGISTRY","serviceAccount":"projects/her-13a74/serviceAccounts/356704544247-compute@developer.gserviceaccount.com","automaticUpdatePolicy":{}},"serviceConfig":{"service":"projects/her-13a74/locations/us-central1/services/sendsos","timeoutSeconds":60,"environmentVariables":{"TWILIO_SID":"ACb71623335b555e387f22fcfe39ac12ca","TWILIO_TOKEN":"426f64229b2e11c017811ac09c8e762f","TWILIO_FROM":"+1 774 485 5603","FIREBASE_CONFIG":"{\"projectId\":\"her-13a74\",\"storageBucket\":\"her-13a74.firebasestorage.app\"}","GCLOUD_PROJECT":"her-13a74","EVENTARC_CLOUD_EVENT_SOURCE":"projects/her-13a74/locations/us-central1/services/sendSOS","FUNCTION_TARGET":"sendSOS","LOG_EXECUTION_ID":"true","FUNCTION_SIGNATURE_TYPE":"http"},"maxInstanceCount":10,"ingressSettings":"ALLOW_ALL","uri":"https://sendsos-qk6mfcccsq-uc.a.run.app","serviceAccountEmail":"356704544247-compute@developer.gserviceaccount.com","availableMemory":"256Mi","allTrafficOnLatestRevision":true,"revision":"sendsos-00010-nik","maxInstanceRequestConcurrency":80,"availableCpu":"1"},"state":"ACTIVE","updateTime":"2025-08-25T06:26:56.167411888Z","labels":{"deployment-tool":"cli-firebase","deployment-callable":"true","firebase-functions-hash":"10a4991d5e8d4962f51c2daa6ed3df580e959f98"},"environment":"GEN_2","url":"https://us-central1-her-13a74.cloudfunctions.net/sendSOS","createTime":"2025-08-23T03:54:41.915376820Z","satisfiesPzi":true},{"name":"projects/her-13a74/locations/us-central1/functions/health","buildConfig":{"build":"projects/356704544247/locations/us-central1/builds/dddba4dd-fedc-49b0-a428-d117cc0846a1","runtime":"nodejs20","entryPoint":"health","source":{"storageSource":{"bucket":"gcf-v2-sources-356704544247-us-central1","object":"health/function-source.zip","generation":"1756103145115060"}},"environmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""},"dockerRepository":"projects/her-13a74/locations/us-central1/repositories/gcf-artifacts","sourceProvenance":{"resolvedStorageSource":{"bucket":"gcf-v2-sources-356704544247-us-central1","object":"health/function-source.zip","generation":"1756103145115060"}},"dockerRegistry":"ARTIFACT_REGISTRY","serviceAccount":"projects/her-13a74/serviceAccounts/356704544247-compute@developer.gserviceaccount.com","automaticUpdatePolicy":{}},"serviceConfig":{"service":"projects/her-13a74/locations/us-central1/services/health","timeoutSeconds":60,"environmentVariables":{"TWILIO_SID":"ACb71623335b555e387f22fcfe39ac12ca","TWILIO_TOKEN":"426f64229b2e11c017811ac09c8e762f","TWILIO_FROM":"+1 774 485 5603","FIREBASE_CONFIG":"{\"projectId\":\"her-13a74\",\"storageBucket\":\"her-13a74.firebasestorage.app\"}","GCLOUD_PROJECT":"her-13a74","EVENTARC_CLOUD_EVENT_SOURCE":"projects/her-13a74/locations/us-central1/services/health","FUNCTION_TARGET":"health","LOG_EXECUTION_ID":"true"},"maxInstanceCount":10,"ingressSettings":"ALLOW_ALL","uri":"https://health-qk6mfcccsq-uc.a.run.app","serviceAccountEmail":"356704544247-compute@developer.gserviceaccount.com","availableMemory":"256Mi","allTrafficOnLatestRevision":true,"revision":"health-00004-juf","maxInstanceRequestConcurrency":80,"availableCpu":"1"},"state":"ACTIVE","updateTime":"2025-08-25T06:26:56.597091210Z","labels":{"firebase-functions-hash":"10a4991d5e8d4962f51c2daa6ed3df580e959f98","deployment-tool":"cli-firebase"},"environment":"GEN_2","url":"https://us-central1-her-13a74.cloudfunctions.net/health","createTime":"2025-08-23T21:42:18.260333595Z","satisfiesPzi":true},{"name":"projects/her-13a74/locations/us-central1/functions/findUserByMobile","buildConfig":{"build":"projects/356704544247/locations/us-central1/builds/dddba4dd-fedc-49b0-a428-d117cc0846a1","runtime":"nodejs20","entryPoint":"findUserByMobile","source":{"storageSource":{"bucket":"gcf-v2-sources-356704544247-us-central1","object":"findUserByMobile/function-source.zip","generation":"1756103207894015"}},"environmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""},"dockerRepository":"projects/her-13a74/locations/us-central1/repositories/gcf-artifacts","sourceProvenance":{"resolvedStorageSource":{"bucket":"gcf-v2-sources-356704544247-us-central1","object":"findUserByMobile/function-source.zip","generation":"1756103207894015"}},"dockerRegistry":"ARTIFACT_REGISTRY","serviceAccount":"projects/her-13a74/serviceAccounts/356704544247-compute@developer.gserviceaccount.com","automaticUpdatePolicy":{}},"serviceConfig":{"service":"projects/her-13a74/locations/us-central1/services/finduserbymobile","timeoutSeconds":60,"environmentVariables":{"TWILIO_SID":"ACb71623335b555e387f22fcfe39ac12ca","TWILIO_TOKEN":"426f64229b2e11c017811ac09c8e762f","TWILIO_FROM":"+1 774 485 5603","FIREBASE_CONFIG":"{\"projectId\":\"her-13a74\",\"storageBucket\":\"her-13a74.firebasestorage.app\"}","GCLOUD_PROJECT":"her-13a74","EVENTARC_CLOUD_EVENT_SOURCE":"projects/her-13a74/locations/us-central1/services/findUserByMobile","FUNCTION_TARGET":"findUserByMobile","LOG_EXECUTION_ID":"true","FUNCTION_SIGNATURE_TYPE":"http"},"maxInstanceCount":10,"ingressSettings":"ALLOW_ALL","uri":"https://finduserbymobile-qk6mfcccsq-uc.a.run.app","serviceAccountEmail":"356704544247-compute@developer.gserviceaccount.com","availableMemory":"256Mi","allTrafficOnLatestRevision":true,"revision":"finduserbymobile-00002-goz","maxInstanceRequestConcurrency":80,"availableCpu":"1"},"state":"ACTIVE","updateTime":"2025-08-25T06:26:57.485232830Z","labels":{"deployment-callable":"true","firebase-functions-hash":"10a4991d5e8d4962f51c2daa6ed3df580e959f98","deployment-tool":"cli-firebase"},"environment":"GEN_2","url":"https://us-central1-her-13a74.cloudfunctions.net/findUserByMobile","createTime":"2025-08-25T05:30:53.676447026Z","satisfiesPzi":true}]}
+[info] i  functions: ensuring required API run.googleapis.com is enabled... 
+[info] i  functions: ensuring required API eventarc.googleapis.com is enabled... 
+[info] i  functions: ensuring required API pubsub.googleapis.com is enabled... 
+[info] i  functions: ensuring required API storage.googleapis.com is enabled... 
+[info] i  functions: generating the service identity for pubsub.googleapis.com... 
+[debug] [2025-08-25T07:16:14.136Z] Checked if tokens are valid: true, expires at: 1756109744117
+[debug] [2025-08-25T07:16:14.137Z] Checked if tokens are valid: true, expires at: 1756109744117
+[info] i  functions: generating the service identity for eventarc.googleapis.com... 
+[debug] [2025-08-25T07:16:14.137Z] Checked if tokens are valid: true, expires at: 1756109744117
+[debug] [2025-08-25T07:16:14.137Z] Checked if tokens are valid: true, expires at: 1756109744117
+[debug] [2025-08-25T07:16:14.137Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1beta1/projects/356704544247/services/pubsub.googleapis.com:generateServiceIdentity [none]
+[debug] [2025-08-25T07:16:14.137Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1beta1/projects/356704544247/services/pubsub.googleapis.com:generateServiceIdentity x-goog-quota-user=projects/356704544247
+[debug] [2025-08-25T07:16:14.137Z] >>> [apiv2][body] POST https://serviceusage.googleapis.com/v1beta1/projects/356704544247/services/pubsub.googleapis.com:generateServiceIdentity {}
+[debug] [2025-08-25T07:16:14.139Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1beta1/projects/356704544247/services/eventarc.googleapis.com:generateServiceIdentity [none]
+[debug] [2025-08-25T07:16:14.139Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1beta1/projects/356704544247/services/eventarc.googleapis.com:generateServiceIdentity x-goog-quota-user=projects/356704544247
+[debug] [2025-08-25T07:16:14.139Z] >>> [apiv2][body] POST https://serviceusage.googleapis.com/v1beta1/projects/356704544247/services/eventarc.googleapis.com:generateServiceIdentity {}
+[debug] [2025-08-25T07:16:16.402Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1beta1/projects/356704544247/services/pubsub.googleapis.com:generateServiceIdentity 200
+[debug] [2025-08-25T07:16:16.402Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1beta1/projects/356704544247/services/pubsub.googleapis.com:generateServiceIdentity {"name":"operations/finished.DONE_OPERATION","done":true,"response":{"@type":"type.googleapis.com/google.api.serviceusage.v1beta1.ServiceIdentity","email":"service-356704544247@gcp-sa-pubsub.iam.gserviceaccount.com","uniqueId":"112654095365370788004"}}
+[debug] [2025-08-25T07:16:16.448Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1beta1/projects/356704544247/services/eventarc.googleapis.com:generateServiceIdentity 200
+[debug] [2025-08-25T07:16:16.449Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1beta1/projects/356704544247/services/eventarc.googleapis.com:generateServiceIdentity {"name":"operations/finished.DONE_OPERATION","done":true,"response":{"@type":"type.googleapis.com/google.api.serviceusage.v1beta1.ServiceIdentity","email":"service-356704544247@gcp-sa-eventarc.iam.gserviceaccount.com","uniqueId":"107838793903361991083"}}
+[debug] [2025-08-25T07:16:16.452Z] Checked if tokens are valid: true, expires at: 1756109744117
+[debug] [2025-08-25T07:16:16.452Z] Checked if tokens are valid: true, expires at: 1756109744117
+[debug] [2025-08-25T07:16:16.452Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/her-13a74 [none]

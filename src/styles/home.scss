@@ -254,7 +254,6 @@ $large: 1200px;
   h3 {
     color: $accent;
     margin-bottom: 1.5rem;
-    text-align: center;
     font-size: 1.5rem;
     
     i {
@@ -269,6 +268,7 @@ $large: 1200px;
     overflow-y: auto;
     padding-right: 0.8rem;
     margin-bottom: 1.5rem;
+   
     
     /* Custom scrollbar */
     &::-webkit-scrollbar {
@@ -284,7 +284,11 @@ $large: 1200px;
       background: $accent;
       border-radius: 10px;
     }
+    @media (max-width: 768px){
+      padding-right: 0rem !important;
+    }
   }
+ 
   
   .contact-item {
     display: flex;
